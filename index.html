@@ -37,14 +37,16 @@
     /* ===== INFO SCREENS (notoken / invalid) ===== */
 
     .info-screen {
-      flex: 1;
+      display: none;
+      flex-direction: column;
+      height: 100dvh;
       align-items: center;
       justify-content: center;
       padding: 32px 24px;
       text-align: center;
     }
 
-    .info-screen.active { display: flex; flex-direction: column; height: 100dvh; }
+    .info-screen.active { display: flex; }
 
     .info-icon { font-size: 2.4rem; margin-bottom: 18px; opacity: 0.4; }
     .info-screen h2 { font-size: 1.2rem; font-weight: 600; }
