@@ -61,14 +61,18 @@ BESONDERHEITEN: [Alles andere Wichtige]
 Antworte immer auf Deutsch. Beginne mit herzlicher Begrüßung, nenne den Namen der Person, erkläre kurz was ihr heute macht.`;
 
 function buildSystemPrompt(user) {
-  let p = user?.designSession ? DESIGN_PROMPT : BASE_PROMPT;
-  if (user?.context) {
-    p += `\n\nHintergrund zu ${user.name} (von Philipp vorab notiert): ${user.context}`;
-  }
-  if (user?.questions?.length > 0) {
-    p += `\n\nPhilipp hat folgende spezifische Fragen / Punkte für dieses Interview notiert:\n${user.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}`;
-  }
-  return p;
+  const base = user?.designSession ? DESIGN_PROMPT : BASE_PROMPT;
+  if (!user) return base;
+
+  const contextBlock = user.context
+    ? `\n\n---\nVORWISSEN ÜBER ${user.name.toUpperCase()} (von Philipp notiert, vor dem Interview):\n${user.context}\n\nWICHTIG: Diese Punkte sind bereits bekannt — stelle KEINE Fragen die damit beantwortet sind. Starte stattdessen beim ersten noch offenen Thema. Dein Einstieg soll zeigen, dass du die Person kennst.\n---`
+    : '';
+
+  const questionsBlock = user.questions?.length > 0
+    ? `\n\nPFLICHTFRAGEN die Philipp explizit stellen will (organisch einbauen, nicht als Liste):\n${user.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}`
+    : '';
+
+  return base + contextBlock + questionsBlock;
 }
 
 function stripImages(messages) {
