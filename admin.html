@@ -11,1221 +11,1011 @@
       --bg: #0f0f0f;
       --surface: #1a1a1a;
       --surface-2: #222;
+      --surface-3: #2a2a2a;
       --accent: #7c6ef7;
-      --accent-glow: rgba(124, 110, 247, 0.12);
-      --accent-border: rgba(124, 110, 247, 0.28);
+      --accent-glow: rgba(124,110,247,.12);
+      --accent-border: rgba(124,110,247,.28);
       --text: #e2e2ec;
       --text-muted: #6b7280;
       --border: #2a2a2a;
       --green: #10b981;
       --amber: #f59e0b;
+      --red: #ef4444;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
 
-    html, body {
-      height: 100%;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow: hidden;
-    }
-
+    /* ── Screens ── */
     .screen { display: none; flex-direction: column; height: 100dvh; }
     .screen.active { display: flex; }
 
-    /* ===== LOGIN ===== */
-
-    #s-login {
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .login-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 40px 36px;
-      max-width: 360px;
-      width: 100%;
-      animation: fadeUp 0.3s ease;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .login-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 4px;
-    }
-
+    /* ── Login ── */
+    #s-login { align-items: center; justify-content: center; padding: 24px; }
+    .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px 36px; max-width: 360px; width: 100%; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .login-card { animation: fadeUp .3s ease; }
+    .login-label { font-size: .7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
     .login-card h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; }
 
-    .input {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-size: 0.93rem;
-      padding: 11px 14px;
-      outline: none;
-      font-family: inherit;
-      transition: border-color .15s, box-shadow .15s;
-    }
-
-    .input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
+    /* ── Inputs / Buttons ── */
+    .input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: .93rem; padding: 11px 14px; outline: none; font-family: inherit; transition: border-color .15s, box-shadow .15s; }
+    .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
     .input::placeholder { color: #383848; }
-
     textarea.input { resize: vertical; min-height: 70px; line-height: 1.5; }
-
-    .btn-primary {
-      width: 100%;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 0.93rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
-      font-family: inherit;
-      transition: opacity .15s;
-    }
-
-    .btn-primary:hover { opacity: .88; }
-
-    .err-msg { color: #fca5a5; font-size: 0.82rem; margin-top: 8px; min-height: 18px; }
-
-    /* ===== TOPBAR ===== */
-
-    .topbar {
-      border-bottom: 1px solid var(--border);
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-      background: var(--bg);
-    }
-
-    .topbar-title { font-weight: 600; font-size: 0.92rem; flex: 1; }
-
-    .btn-sm {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 7px 14px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      white-space: nowrap;
-      transition: opacity .15s;
-    }
-
-    .btn-sm:hover { opacity: .88; }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-muted);
-      border: none;
-      padding: 6px 0;
-      font-size: 0.85rem;
-      cursor: pointer;
-      font-family: inherit;
-      transition: color .15s;
-      white-space: nowrap;
-    }
-
+    .btn { border: none; border-radius: 10px; font-family: inherit; cursor: pointer; transition: opacity .15s; font-weight: 600; }
+    .btn:hover { opacity: .85; }
+    .btn-primary { background: var(--accent); color: #fff; padding: 12px 18px; font-size: .93rem; width: 100%; margin-top: 10px; }
+    .btn-sm { background: var(--accent); color: #fff; padding: 7px 14px; font-size: .82rem; border-radius: 8px; white-space: nowrap; border: none; font-family: inherit; cursor: pointer; font-weight: 600; transition: opacity .15s; }
+    .btn-sm:hover { opacity: .85; }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: none; padding: 6px 0; font-size: .85rem; cursor: pointer; font-family: inherit; transition: color .15s; }
     .btn-ghost:hover { color: var(--text); }
-
-    .btn-dup {
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      font-family: inherit;
-      white-space: nowrap;
-      transition: border-color .15s, color .15s;
-    }
-
-    .btn-dup:hover { border-color: var(--accent); color: var(--text); }
-
-    /* ===== USER LIST ===== */
-
-    .list-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .list-body::-webkit-scrollbar { width: 4px; }
-    .list-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-    .empty-state {
-      text-align: center;
-      color: var(--text-muted);
-      padding: 48px 24px;
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
-
-    .user-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: border-color .15s;
-    }
-
-    .user-card:hover { border-color: #3a3a4a; }
-
-    .card-info { flex: 1; min-width: 0; }
-    .card-name { font-weight: 600; font-size: 0.95rem; }
-    .card-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
-
-    .status-badge {
-      font-size: 0.68rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 20px;
-      letter-spacing: .04em;
-    }
-
-    .status-none   { background: rgba(107,114,128,.15); color: #9ca3af; }
-    .status-active { background: rgba(245,158,11,.12); color: var(--amber); }
-    .status-done   { background: rgba(16,185,129,.12); color: var(--green); }
-    .status-intake { background: rgba(124,110,247,.15); color: #a78bfa; }
-
-    .card-date { font-size: 0.72rem; color: var(--text-muted); }
-
-    .card-btns { display: flex; gap: 8px; flex-shrink: 0; }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 6px 12px;
-      font-size: 0.78rem;
-      cursor: pointer;
-      font-family: inherit;
-      white-space: nowrap;
-      transition: border-color .15s, color .15s;
-    }
-
+    .btn-outline { background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: .8rem; cursor: pointer; font-family: inherit; transition: border-color .15s, color .15s; }
     .btn-outline:hover { border-color: var(--accent); color: var(--text); }
+    .btn-cancel { flex: 1; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-size: .93rem; cursor: pointer; font-family: inherit; }
+    .btn-cancel:hover { border-color: var(--accent); color: var(--text); }
+    .btn-danger { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); border-radius: 8px; padding: 6px 12px; font-size: .8rem; cursor: pointer; font-family: inherit; }
+    .btn-danger:hover { background: rgba(239,68,68,.25); }
+    .err-msg { color: #fca5a5; font-size: .82rem; margin-top: 8px; min-height: 18px; }
 
-    .btn-open {
-      background: var(--surface-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 6px 12px;
-      font-size: 0.78rem;
-      cursor: pointer;
-      font-family: inherit;
-      white-space: nowrap;
-      transition: border-color .15s;
-    }
+    /* ── Topbar ── */
+    .topbar { border-bottom: 1px solid var(--border); padding: 0 18px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; background: var(--bg); height: 52px; }
+    .topbar-title { font-weight: 600; font-size: .92rem; flex: 1; }
 
-    .btn-open:hover { border-color: var(--accent); }
+    /* ── Nav tabs ── */
+    .nav-tabs { display: flex; gap: 2px; background: var(--surface); border-radius: 10px; padding: 3px; }
+    .nav-tab { padding: 6px 14px; border-radius: 8px; font-size: .82rem; font-weight: 500; cursor: pointer; color: var(--text-muted); border: none; background: transparent; font-family: inherit; transition: color .15s, background .15s; }
+    .nav-tab.active { background: var(--accent); color: #fff; }
+    .nav-tab:hover:not(.active) { color: var(--text); }
 
-    /* ===== DETAIL ===== */
+    /* ── Main layout ── */
+    #s-main { overflow: hidden; }
+    .main-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
 
-    .detail-scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 18px;
-    }
+    /* ── Pipeline (Kanban) ── */
+    #view-pipeline { flex: 1; overflow-x: auto; padding: 16px; display: flex; gap: 12px; }
+    #view-pipeline::-webkit-scrollbar { height: 6px; }
+    #view-pipeline::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .kanban-col { flex-shrink: 0; width: 230px; display: flex; flex-direction: column; gap: 8px; }
+    .kanban-header { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); padding: 0 4px 4px; display: flex; align-items: center; justify-content: space-between; }
+    .kanban-count { background: var(--surface-3); border-radius: 10px; padding: 1px 7px; font-size: .68rem; color: var(--text-muted); }
+    .kanban-cards { display: flex; flex-direction: column; gap: 8px; }
+    .deal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: border-color .15s, transform .1s; }
+    .deal-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .deal-card-name { font-weight: 600; font-size: .88rem; }
+    .deal-card-title { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
+    .deal-card-meta { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
 
-    .detail-scroll::-webkit-scrollbar { width: 4px; }
-    .detail-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    /* ── Contacts list ── */
+    #view-contacts { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+    #view-contacts::-webkit-scrollbar { width: 4px; }
+    #view-contacts::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .contact-row { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color .15s; }
+    .contact-row:hover { border-color: var(--accent); }
+    .contact-row-info { flex: 1; }
+    .contact-row-name { font-weight: 600; font-size: .92rem; }
+    .contact-row-meta { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
 
-    .detail-inner { max-width: 640px; margin: 0 auto; }
+    /* ── Status badges ── */
+    .badge { font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; letter-spacing: .04em; white-space: nowrap; }
+    .badge-none     { background: rgba(107,114,128,.15); color: #9ca3af; }
+    .badge-active   { background: rgba(245,158,11,.12); color: var(--amber); }
+    .badge-done     { background: rgba(16,185,129,.12); color: var(--green); }
+    .badge-purple   { background: rgba(124,110,247,.15); color: #a78bfa; }
+    .badge-red      { background: rgba(239,68,68,.12); color: var(--red); }
 
-    .section { margin-bottom: 20px; }
+    /* ── Deal detail ── */
+    #s-deal { overflow: hidden; }
+    .deal-layout { flex: 1; display: flex; overflow: hidden; }
+    .deal-sidebar { width: 260px; border-right: 1px solid var(--border); overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; flex-shrink: 0; }
+    .deal-sidebar::-webkit-scrollbar { width: 4px; }
+    .deal-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .deal-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .deal-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 18px; flex-shrink: 0; }
+    .deal-tab { padding: 12px 16px; font-size: .82rem; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s, border-color .15s; }
+    .deal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .deal-tab-body { flex: 1; overflow-y: auto; padding: 18px; }
+    .deal-tab-body::-webkit-scrollbar { width: 4px; }
+    .deal-tab-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    .section-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
+    /* ── Sidebar fields ── */
+    .field-label { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
+    .field-val { font-size: .88rem; color: var(--text); }
+    .stage-select { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: .85rem; padding: 8px 10px; font-family: inherit; outline: none; cursor: pointer; }
+    .stage-select:focus { border-color: var(--accent); }
 
-    .intake-banner {
-      background: rgba(124,110,247,.08);
-      border: 1px solid rgba(124,110,247,.2);
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .link-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 14px;
-    }
-
-    .link-code {
-      flex: 1;
-      font-family: 'Courier New', monospace;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .btn-copy-sm {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 5px 12px;
-      font-size: 0.76rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: opacity .15s;
-    }
-
-    .btn-copy-sm:hover { opacity: .85; }
-
-    .btn-ctx {
-      background: transparent;
-      color: var(--accent);
-      border: 1px dashed var(--accent-border);
-      border-radius: 8px;
-      padding: 7px 14px;
-      font-size: 0.82rem;
-      cursor: pointer;
-      font-family: inherit;
-      width: 100%;
-      margin-top: 6px;
-      transition: background .15s;
-    }
-
-    .btn-ctx:hover { background: var(--accent-glow); }
-
-    /* ===== TOGGLE ===== */
-
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-    }
-
-    .toggle-switch {
-      position: relative;
-      width: 36px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-
-    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
-
-    .toggle-slider {
-      position: absolute;
-      inset: 0;
-      background: #3a3a4a;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: background .2s;
-    }
-
-    .toggle-slider::before {
-      content: '';
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      top: 3px;
-      left: 3px;
-      transition: transform .2s;
-    }
-
-    .toggle-switch input:checked + .toggle-slider { background: var(--accent); }
-    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
-
-    .toggle-text { flex: 1; }
-    .toggle-label { font-size: 0.88rem; font-weight: 500; }
-    .toggle-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-
-    /* ===== QUESTIONS ===== */
-
-    .question-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .q-input {
-      flex: 1;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 0.88rem;
-      padding: 8px 12px;
-      outline: none;
-      font-family: inherit;
-      transition: border-color .15s;
-    }
-
-    .q-input:focus { border-color: var(--accent); }
-
-    .q-remove {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 1.1rem;
-      padding: 4px 6px;
-      transition: color .15s;
-    }
-
-    .q-remove:hover { color: #fca5a5; }
-
-    .btn-add-q {
-      background: transparent;
-      color: var(--accent);
-      border: 1px dashed var(--accent-border);
-      border-radius: 8px;
-      padding: 7px 14px;
-      font-size: 0.82rem;
-      cursor: pointer;
-      font-family: inherit;
-      width: 100%;
-      margin-top: 4px;
-      transition: background .15s;
-    }
-
-    .btn-add-q:hover { background: var(--accent-glow); }
-
-    /* ===== SESSION TIMELINE ===== */
-
-    .session-empty { color: var(--text-muted); font-size: 0.85rem; font-style: italic; }
-
-    .timeline { display: flex; flex-direction: column; gap: 8px; }
-
+    /* ── Sessions ── */
+    .session-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+    .session-card-header { display: flex; align-items: center; gap: 10px; }
+    .session-card-title { font-weight: 600; font-size: .9rem; flex: 1; }
+    .session-link { font-family: monospace; font-size: .72rem; color: var(--text-muted); margin-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .session-msgs { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
+    .session-msgs::-webkit-scrollbar { width: 3px; }
     .tl-row { display: flex; gap: 8px; align-items: flex-start; }
-    .tl-row.assistant { flex-direction: row; }
     .tl-row.user { flex-direction: row-reverse; }
-
-    .tl-label {
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      white-space: nowrap;
-      padding-top: 3px;
-      min-width: 28px;
-      text-align: right;
-    }
-
+    .tl-label { font-size: .65rem; font-weight: 700; color: var(--text-muted); white-space: nowrap; padding-top: 3px; min-width: 26px; }
     .tl-row.user .tl-label { text-align: left; }
+    .tl-text { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 7px 11px; font-size: .8rem; line-height: 1.55; max-width: 85%; white-space: pre-wrap; word-break: break-word; }
+    .tl-row.user .tl-text { background: var(--accent-glow); border-color: var(--accent-border); }
+    .briefing-box { background: rgba(16,185,129,.06); border: 1px solid rgba(16,185,129,.2); border-radius: 10px; padding: 14px; margin-top: 12px; }
+    .briefing-raw { font-family: monospace; font-size: .75rem; color: #86efac; white-space: pre-wrap; line-height: 1.6; max-height: 200px; overflow-y: auto; margin: 8px 0; }
+    .btn-copy-green { background: rgba(16,185,129,.15); color: var(--green); border: 1px solid rgba(16,185,129,.3); border-radius: 7px; padding: 6px 14px; font-size: .8rem; cursor: pointer; font-family: inherit; }
+    .btn-copy-green:hover { background: rgba(16,185,129,.25); }
 
-    .tl-text {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-size: 0.82rem;
-      line-height: 1.6;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-word;
-      max-width: 85%;
-    }
+    /* ── Tasks ── */
+    .task-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; }
+    .task-check { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+    .task-title { flex: 1; font-size: .88rem; }
+    .task-title.done { text-decoration: line-through; color: var(--text-muted); }
+    .task-priority { font-size: .68rem; font-weight: 600; padding: 2px 7px; border-radius: 10px; }
+    .priority-hoch   { background: rgba(239,68,68,.15); color: var(--red); }
+    .priority-mittel { background: rgba(245,158,11,.12); color: var(--amber); }
+    .priority-niedrig{ background: rgba(107,114,128,.15); color: #9ca3af; }
+    .subtask-row { margin-left: 26px; }
+    .btn-add-task { background: transparent; color: var(--accent); border: 1px dashed var(--accent-border); border-radius: 8px; padding: 8px 14px; font-size: .82rem; cursor: pointer; font-family: inherit; width: 100%; margin-top: 8px; transition: background .15s; }
+    .btn-add-task:hover { background: var(--accent-glow); }
 
-    .tl-row.user .tl-text {
-      background: var(--accent-glow);
-      border-color: var(--accent-border);
-    }
+    /* ── Activities ── */
+    .activity-row { display: flex; gap: 10px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .activity-row:last-child { border-bottom: none; }
+    .activity-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: .8rem; flex-shrink: 0; margin-top: 1px; }
+    .activity-body { flex: 1; }
+    .activity-subject { font-size: .88rem; font-weight: 500; }
+    .activity-text { font-size: .8rem; color: var(--text-muted); line-height: 1.5; margin-top: 2px; white-space: pre-wrap; max-height: 80px; overflow: hidden; cursor: pointer; }
+    .activity-text.expanded { max-height: none; }
+    .activity-date { font-size: .72rem; color: var(--text-muted); margin-top: 4px; }
+    .btn-add-note { background: transparent; color: var(--accent); border: 1px dashed var(--accent-border); border-radius: 8px; padding: 8px 14px; font-size: .82rem; cursor: pointer; font-family: inherit; width: 100%; margin-bottom: 12px; transition: background .15s; }
+    .btn-add-note:hover { background: var(--accent-glow); }
 
-    .briefing-preview {
-      background: rgba(16,185,129,.06);
-      border: 1px solid rgba(16,185,129,.2);
-      border-radius: 10px;
-      padding: 14px;
-      margin-top: 12px;
-    }
+    /* ── Invoices ── */
+    .invoice-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+    .invoice-header { display: flex; align-items: center; gap: 10px; }
+    .invoice-number { font-weight: 700; font-size: .9rem; font-family: monospace; }
+    .invoice-amount { font-weight: 700; font-size: 1rem; color: var(--green); margin-left: auto; }
+    .invoice-meta { font-size: .75rem; color: var(--text-muted); margin-top: 4px; }
 
-    .briefing-raw {
-      font-family: 'Courier New', monospace;
-      font-size: 0.75rem;
-      color: #86efac;
-      white-space: pre-wrap;
-      line-height: 1.6;
-      margin: 8px 0;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .btn-copy-briefing {
-      background: rgba(16,185,129,.15);
-      color: var(--green);
-      border: 1px solid rgba(16,185,129,.3);
-      border-radius: 7px;
-      padding: 6px 14px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background .15s;
-    }
-
-    .btn-copy-briefing:hover { background: rgba(16,185,129,.25); }
-
-    /* ===== MODAL ===== */
-
-    .modal-bg {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      z-index: 100;
-      backdrop-filter: blur(4px);
-    }
-
+    /* ── Modal ── */
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 100; backdrop-filter: blur(4px); }
     .modal-bg.hidden { display: none; }
-
-    .modal-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 28px;
-      max-width: 420px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      animation: fadeUp 0.2s ease;
-    }
-
-    .modal-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-    .modal-field-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-bottom: -6px; }
-
+    .modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 28px; max-width: 440px; width: 100%; display: flex; flex-direction: column; gap: 12px; animation: fadeUp .2s ease; max-height: 90vh; overflow-y: auto; }
+    .modal-card h3 { font-size: 1.1rem; font-weight: 700; }
+    .modal-field-label { font-size: .75rem; color: var(--text-muted); font-weight: 500; margin-bottom: -6px; }
     .modal-btns { display: flex; gap: 8px; margin-top: 4px; }
     .modal-btns .btn-primary { margin-top: 0; }
 
-    .btn-cancel {
-      flex: 1;
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 0.93rem;
-      cursor: pointer;
-      font-family: inherit;
-      transition: border-color .15s;
-    }
-
-    .btn-cancel:hover { border-color: var(--accent); color: var(--text); }
-
-    /* ===== CONTEXT CHAT MODAL ===== */
-
-    #ctx-modal .modal-card {
-      max-width: 520px;
-      padding: 24px 22px;
-      gap: 0;
-    }
-
-    .ctx-msgs {
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      min-height: 130px;
-      max-height: 260px;
-      margin: 14px 0;
-    }
-
+    /* ── Context chat modal ── */
+    #ctx-modal .modal-card { max-width: 520px; padding: 22px; gap: 0; }
+    .ctx-msgs { overflow-y: auto; display: flex; flex-direction: column; gap: 7px; min-height: 130px; max-height: 260px; margin: 14px 0; }
     .ctx-msgs::-webkit-scrollbar { width: 3px; }
     .ctx-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-    .ctx-bubble {
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 0.83rem;
-      line-height: 1.55;
-      word-break: break-word;
-    }
-
-    .ctx-bubble.ai {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      align-self: flex-start;
-      max-width: 90%;
-    }
-
-    .ctx-bubble.user {
-      background: var(--accent-glow);
-      border: 1px solid var(--accent-border);
-      align-self: flex-end;
-      max-width: 90%;
-    }
-
-    .ctx-preview {
-      background: rgba(16,185,129,.06);
-      border: 1px solid rgba(16,185,129,.2);
-      border-radius: 8px;
-      padding: 10px 13px;
-      font-size: 0.83rem;
-      line-height: 1.6;
-      margin-bottom: 10px;
-      display: none;
-    }
-
-    .ctx-input-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .ctx-input-row .input {
-      flex: 1;
-      padding: 9px 12px;
-      font-size: 0.88rem;
-    }
-
-    .ctx-send-btn {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 9px 16px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: opacity .15s;
-      white-space: nowrap;
-    }
-
+    .ctx-bubble { padding: 8px 12px; border-radius: 10px; font-size: .83rem; line-height: 1.55; word-break: break-word; }
+    .ctx-bubble.ai { background: var(--surface-2); border: 1px solid var(--border); align-self: flex-start; max-width: 90%; }
+    .ctx-bubble.user { background: var(--accent-glow); border: 1px solid var(--accent-border); align-self: flex-end; max-width: 90%; }
+    .ctx-preview { background: rgba(16,185,129,.06); border: 1px solid rgba(16,185,129,.2); border-radius: 8px; padding: 10px 13px; font-size: .83rem; line-height: 1.6; margin-bottom: 10px; display: none; }
+    .ctx-input-row { display: flex; gap: 8px; align-items: center; }
+    .ctx-input-row .input { flex: 1; padding: 9px 12px; font-size: .88rem; }
+    .ctx-send-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 9px 16px; font-size: .88rem; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; }
     .ctx-send-btn:hover { opacity: .85; }
     .ctx-send-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── Empty / scroll ── */
+    .empty { text-align: center; color: var(--text-muted); padding: 40px 24px; font-size: .88rem; line-height: 1.6; }
+    .scroll-body { overflow-y: auto; }
+    .scroll-body::-webkit-scrollbar { width: 4px; }
+    .scroll-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
   </style>
 </head>
 <body>
 
-  <!-- ===== LOGIN ===== -->
-  <div id="s-login" class="screen">
-    <div class="login-card">
-      <div class="login-label">Admin</div>
-      <h1>Zugang</h1>
-      <input id="pw-input" type="password" class="input" placeholder="Passwort" />
-      <button id="pw-btn" class="btn-primary">Anmelden →</button>
-      <p id="pw-err" class="err-msg"></p>
-    </div>
+<!-- ═══ LOGIN ═══ -->
+<div id="s-login" class="screen">
+  <div class="login-card">
+    <div class="login-label">Admin</div>
+    <h1>Zugang</h1>
+    <input id="pw-input" type="password" class="input" placeholder="Passwort" />
+    <button id="pw-btn" class="btn btn-primary">Anmelden →</button>
+    <p id="pw-err" class="err-msg"></p>
   </div>
+</div>
 
-  <!-- ===== USER LIST ===== -->
-  <div id="s-list" class="screen">
-    <div class="topbar">
-      <span class="topbar-title">Kontakte</span>
-      <button id="new-btn" class="btn-sm">+ Neuer Kontakt</button>
+<!-- ═══ MAIN (Pipeline + Contacts) ═══ -->
+<div id="s-main" class="screen">
+  <div class="topbar">
+    <span class="topbar-title">CRM</span>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchView('pipeline')">Pipeline</button>
+      <button class="nav-tab" onclick="switchView('contacts')">Kontakte</button>
     </div>
-    <div id="user-list" class="list-body"></div>
+    <div style="flex:1"></div>
+    <button id="new-contact-btn" class="btn-sm">+ Kontakt</button>
   </div>
-
-  <!-- ===== DETAIL ===== -->
-  <div id="s-detail" class="screen">
-    <div class="topbar">
-      <button id="back-btn" class="btn-ghost">← Alle</button>
-      <span id="detail-title" class="topbar-title"></span>
-      <button id="dup-btn" class="btn-dup">Duplizieren</button>
-      <button id="save-btn" class="btn-sm">Speichern</button>
-    </div>
-    <div class="detail-scroll">
-      <div class="detail-inner" id="detail-inner"></div>
-    </div>
+  <div class="main-body">
+    <div id="view-pipeline" style="display:flex"></div>
+    <div id="view-contacts" style="display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:8px;"></div>
   </div>
+</div>
 
-  <!-- ===== MODAL: NEW USER ===== -->
-  <div id="modal" class="modal-bg hidden">
-    <div class="modal-card">
-      <h3>Neuer Kontakt</h3>
-      <div class="modal-field-label">Vorname *</div>
-      <input id="new-name" type="text" class="input" placeholder="z. B. Micha" autocomplete="off" />
-      <div class="modal-field-label">Kontext (optional)</div>
-      <textarea id="new-ctx" class="input" rows="3" placeholder="Unternehmer, hat Firma XYZ, will Website für B2B-Kunden..."></textarea>
-      <div class="modal-btns">
-        <button id="modal-cancel" class="btn-cancel">Abbrechen</button>
-        <button id="modal-ok" class="btn-primary" style="flex:1;margin-top:0">Erstellen →</button>
+<!-- ═══ DEAL DETAIL ═══ -->
+<div id="s-deal" class="screen">
+  <div class="topbar">
+    <button class="btn-ghost" onclick="backToMain()">← Pipeline</button>
+    <span id="deal-title" class="topbar-title"></span>
+    <button id="complete-session-btn" class="btn-sm" style="display:none">Briefing generieren</button>
+    <button id="new-session-btn" class="btn-sm">+ Session</button>
+  </div>
+  <div class="deal-layout">
+    <!-- Sidebar: deal meta -->
+    <div class="deal-sidebar">
+      <div>
+        <div class="field-label">Kontakt</div>
+        <div id="dl-contact-name" class="field-val">—</div>
+        <div id="dl-contact-email" style="font-size:.78rem;color:var(--text-muted);margin-top:2px;"></div>
+      </div>
+      <div>
+        <div class="field-label">Stage</div>
+        <select id="dl-stage" class="stage-select" onchange="saveDealStage()">
+          <option value="anfrage">Anfrage</option>
+          <option value="qualifiziert">Qualifiziert</option>
+          <option value="briefing">Briefing</option>
+          <option value="angebot">Angebot</option>
+          <option value="gewonnen">Gewonnen</option>
+          <option value="verloren">Verloren</option>
+        </select>
+      </div>
+      <div>
+        <div class="field-label">Wert</div>
+        <input id="dl-value" type="number" class="input" placeholder="0" style="font-size:.85rem;padding:8px 10px;" onchange="saveDealValue()" />
+      </div>
+      <div>
+        <div class="field-label">Kontext</div>
+        <textarea id="dl-context" class="input" rows="4" style="font-size:.82rem;" placeholder="Notizen zur Person…" onchange="saveContactContext()"></textarea>
+        <button class="btn-outline" style="width:100%;margin-top:6px;font-size:.78rem;" onclick="openCtxModal()">↗ KI-Kontext sammeln</button>
+      </div>
+      <button class="btn-danger" onclick="deleteCurrentDeal()">Deal löschen</button>
+    </div>
+
+    <!-- Main: tabs -->
+    <div class="deal-main">
+      <div class="deal-tabs">
+        <div class="deal-tab active" onclick="switchTab('sessions')">Sessions</div>
+        <div class="deal-tab" onclick="switchTab('tasks')">Aufgaben</div>
+        <div class="deal-tab" onclick="switchTab('activities')">Aktivitäten</div>
+        <div class="deal-tab" onclick="switchTab('invoices')">Rechnung</div>
+      </div>
+      <div class="deal-tab-body">
+        <div id="tab-sessions"></div>
+        <div id="tab-tasks" style="display:none"></div>
+        <div id="tab-activities" style="display:none"></div>
+        <div id="tab-invoices" style="display:none"></div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ===== MODAL: CONTEXT CHAT ===== -->
-  <div id="ctx-modal" class="modal-bg hidden">
-    <div class="modal-card">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <h3 style="flex:1;font-size:1rem;">Kontext sammeln</h3>
-        <button onclick="closeCtxModal()" class="btn-ghost" style="font-size:1.3rem;padding:0 4px;">×</button>
-      </div>
-      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;">Chat mit der KI über die Person — sie extrahiert automatisch den Kontext.</p>
-      <div id="ctx-msgs" class="ctx-msgs"></div>
-      <div id="ctx-preview" class="ctx-preview"></div>
-      <div class="ctx-input-row">
-        <input id="ctx-input" type="text" class="input" placeholder="Über die Person erzählen…" />
-        <button id="ctx-send-btn" class="ctx-send-btn" onclick="ctxSend()">Senden</button>
-      </div>
-      <div id="ctx-apply-row" style="display:none;margin-top:10px;">
-        <button onclick="applyCtxText()" class="btn-primary" style="margin-top:0;">Kontext übernehmen →</button>
-      </div>
+<!-- ═══ MODAL: New Contact ═══ -->
+<div id="modal-contact" class="modal-bg hidden">
+  <div class="modal-card">
+    <h3>Neuer Kontakt</h3>
+    <div class="modal-field-label">Name *</div>
+    <input id="nc-name" type="text" class="input" placeholder="z. B. Micha Braun" />
+    <div class="modal-field-label">E-Mail</div>
+    <input id="nc-email" type="email" class="input" placeholder="micha@example.com" />
+    <div class="modal-field-label">Firma</div>
+    <input id="nc-company" type="text" class="input" placeholder="Unternehmen GmbH" />
+    <div class="modal-field-label">Kontext</div>
+    <textarea id="nc-ctx" class="input" rows="3" placeholder="Was weißt du über die Person?"></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="hideModal('modal-contact')">Abbrechen</button>
+      <button class="btn btn-primary" style="flex:1;margin-top:0" onclick="createContact()">Erstellen →</button>
     </div>
   </div>
+</div>
 
-  <script>
-    let adminToken = sessionStorage.getItem('adminToken') || '';
-    let users = [];
-    let currentUser = null;
-    let currentSession = null;
-    let ctxMessages = [];
-    let extractedCtx = '';
+<!-- ═══ MODAL: New Session ═══ -->
+<div id="modal-session" class="modal-bg hidden">
+  <div class="modal-card">
+    <h3>Neue Session</h3>
+    <div class="modal-field-label">Titel</div>
+    <input id="ns-title" type="text" class="input" placeholder="z. B. Requirements Interview" />
+    <div class="modal-field-label">Typ</div>
+    <select id="ns-type" class="input" style="padding:9px 10px;">
+      <option value="requirements">Requirements</option>
+      <option value="design">Design</option>
+      <option value="qualification">Qualifikation</option>
+      <option value="review">Review</option>
+    </select>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="hideModal('modal-session')">Abbrechen</button>
+      <button class="btn btn-primary" style="flex:1;margin-top:0" onclick="createSession()">Erstellen →</button>
+    </div>
+  </div>
+</div>
 
-    const $ = id => document.getElementById(id);
+<!-- ═══ MODAL: Add Task ═══ -->
+<div id="modal-task" class="modal-bg hidden">
+  <div class="modal-card">
+    <h3>Neue Aufgabe</h3>
+    <div class="modal-field-label">Titel *</div>
+    <input id="nt-title" type="text" class="input" placeholder="z. B. Wireframe erstellen" />
+    <div class="modal-field-label">Priorität</div>
+    <select id="nt-priority" class="input" style="padding:9px 10px;">
+      <option value="mittel">Mittel</option>
+      <option value="hoch">Hoch</option>
+      <option value="niedrig">Niedrig</option>
+    </select>
+    <div class="modal-field-label">Fällig am</div>
+    <input id="nt-due" type="date" class="input" />
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="hideModal('modal-task')">Abbrechen</button>
+      <button class="btn btn-primary" style="flex:1;margin-top:0" onclick="createTask()">Erstellen →</button>
+    </div>
+  </div>
+</div>
 
-    function show(id) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      $(id).classList.add('active');
+<!-- ═══ MODAL: Add Note ═══ -->
+<div id="modal-note" class="modal-bg hidden">
+  <div class="modal-card">
+    <h3>Notiz hinzufügen</h3>
+    <textarea id="nn-body" class="input" rows="5" placeholder="Gesprächsnotiz, E-Mail-Zusammenfassung, …"></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="hideModal('modal-note')">Abbrechen</button>
+      <button class="btn btn-primary" style="flex:1;margin-top:0" onclick="createNote()">Speichern →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: Context Chat ═══ -->
+<div id="ctx-modal" class="modal-bg hidden">
+  <div class="modal-card">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <h3 style="flex:1;font-size:1rem;">Kontext sammeln</h3>
+      <button onclick="closeCtxModal()" class="btn-ghost" style="font-size:1.3rem;padding:0 4px;">×</button>
+    </div>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-top:6px;">Chat mit der KI — sie extrahiert automatisch den Kontext.</p>
+    <div id="ctx-msgs" class="ctx-msgs"></div>
+    <div id="ctx-preview" class="ctx-preview"></div>
+    <div class="ctx-input-row">
+      <input id="ctx-input" type="text" class="input" placeholder="Über die Person erzählen…" />
+      <button id="ctx-send-btn" class="ctx-send-btn" onclick="ctxSend()">Senden</button>
+    </div>
+    <div id="ctx-apply-row" style="display:none;margin-top:10px;">
+      <button onclick="applyCtxText()" class="btn btn-primary" style="margin-top:0;">Kontext übernehmen →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ════════════════════════════════════════
+  //  STATE
+  // ════════════════════════════════════════
+  let adminToken = sessionStorage.getItem('adminToken') || '';
+  let contacts = [];
+  let deals = [];
+  let currentDeal = null;
+  let currentContact = null;
+  let currentSessions = [];
+  let currentTasks = [];
+  let currentActivities = [];
+  let currentInvoices = [];
+  let activeTab = 'sessions';
+  let ctxMessages = [];
+  let extractedCtx = '';
+
+  const $ = id => document.getElementById(id);
+  const show = id => { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); $(id).classList.add('active'); };
+
+  const STAGES = ['anfrage','qualifiziert','briefing','angebot','gewonnen','verloren'];
+  const STAGE_LABELS = { anfrage:'Anfrage', qualifiziert:'Qualifiziert', briefing:'Briefing', angebot:'Angebot', gewonnen:'Gewonnen ✓', verloren:'Verloren' };
+  const STAGE_BADGE  = { anfrage:'badge-none', qualifiziert:'badge-purple', briefing:'badge-active', angebot:'badge-active', gewonnen:'badge-done', verloren:'badge-red' };
+  const TYPE_ICON    = { 'session-summary':'📋', note:'📝', call:'📞', email:'✉️', internal:'🔧' };
+
+  // ════════════════════════════════════════
+  //  API HELPERS
+  // ════════════════════════════════════════
+  async function api(path, opts = {}) {
+    const res = await fetch(path, {
+      ...opts,
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken, ...(opts.headers || {}) },
+    });
+    if (res.status === 401) { sessionStorage.removeItem('adminToken'); adminToken = ''; show('s-login'); return null; }
+    return res;
+  }
+  async function apiJson(path, opts = {}) {
+    const res = await api(path, opts);
+    if (!res?.ok) return null;
+    return res.json();
+  }
+
+  // ════════════════════════════════════════
+  //  AUTH
+  // ════════════════════════════════════════
+  async function login() {
+    const pw = $('pw-input').value.trim();
+    if (!pw) return;
+    const res = await fetch('/api/contacts', { headers: { 'X-Admin-Token': pw } });
+    if (res.ok) {
+      adminToken = pw;
+      sessionStorage.setItem('adminToken', pw);
+      await loadAll();
+      renderPipeline();
+      show('s-main');
+      $('pw-err').textContent = '';
+    } else {
+      $('pw-err').textContent = 'Falsches Passwort';
+      $('pw-input').focus();
     }
+  }
 
-    async function apiFetch(path, opts = {}) {
-      const res = await fetch(path, {
-        ...opts,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Admin-Token': adminToken,
-          ...(opts.headers || {}),
-        },
-      });
-      if (res.status === 401) {
-        sessionStorage.removeItem('adminToken');
-        adminToken = '';
-        show('s-login');
-        return null;
-      }
-      return res;
-    }
+  // ════════════════════════════════════════
+  //  DATA LOADING
+  // ════════════════════════════════════════
+  async function loadAll() {
+    [contacts, deals] = await Promise.all([
+      apiJson('/api/contacts'),
+      apiJson('/api/deals'),
+    ]);
+    contacts = contacts || [];
+    deals = deals || [];
+  }
 
-    // ===== AUTH =====
+  function contactById(id) { return contacts.find(c => c.id === id); }
 
-    async function login() {
-      const pw = $('pw-input').value.trim();
-      if (!pw) return;
-      const res = await fetch('/api/admin/users', { headers: { 'X-Admin-Token': pw } });
-      if (res.ok) {
-        adminToken = pw;
-        sessionStorage.setItem('adminToken', pw);
-        users = await res.json();
-        renderList();
-        show('s-list');
-        $('pw-err').textContent = '';
-      } else {
-        $('pw-err').textContent = 'Falsches Passwort';
-        $('pw-input').focus();
-      }
-    }
+  // ════════════════════════════════════════
+  //  VIEW SWITCHING
+  // ════════════════════════════════════════
+  function switchView(view) {
+    document.querySelectorAll('.nav-tab').forEach((t, i) => t.classList.toggle('active', ['pipeline','contacts'][i] === view));
+    $('view-pipeline').style.display = view === 'pipeline' ? 'flex' : 'none';
+    $('view-contacts').style.display = view === 'contacts' ? 'flex' : 'none';
+    if (view === 'pipeline') renderPipeline();
+    if (view === 'contacts') renderContacts();
+  }
 
-    // ===== USER LIST =====
-
-    async function loadUsers() {
-      const res = await apiFetch('/api/admin/users');
-      if (!res) return;
-      users = await res.json();
-      renderList();
-    }
-
-    function statusInfo(user) {
-      if (user.invited === false) return { label: 'Eingang', cls: 'status-intake' };
-      if (user.sessionStatus === 'completed') return { label: 'Abgeschlossen', cls: 'status-done' };
-      if (user.sessionStatus === 'in_progress') return { label: 'Läuft', cls: 'status-active' };
-      return { label: 'Kein Interview', cls: 'status-none' };
-    }
-
-    function shortLink(token) {
-      return `${window.location.origin}/i/${token}`;
-    }
-
-    function renderList() {
-      const container = $('user-list');
-      container.innerHTML = '';
-
-      if (users.length === 0) {
-        container.innerHTML = '<div class="empty-state">Noch keine Kontakte.<br>Erstelle den ersten mit dem Button oben rechts.</div>';
-        return;
-      }
-
-      users.forEach(user => {
-        const { label, cls } = statusInfo(user);
-        const date = new Date(user.createdAt).toLocaleDateString('de-DE');
-        const designTag = user.designSession ? '<span class="status-badge status-intake" style="font-size:0.62rem;">Design</span>' : '';
-
+  // ════════════════════════════════════════
+  //  PIPELINE
+  // ════════════════════════════════════════
+  function renderPipeline() {
+    const board = $('view-pipeline');
+    board.innerHTML = '';
+    STAGES.forEach(stage => {
+      const stageDeals = deals.filter(d => d.stage === stage);
+      const col = document.createElement('div');
+      col.className = 'kanban-col';
+      col.innerHTML = `
+        <div class="kanban-header">
+          <span>${STAGE_LABELS[stage]}</span>
+          <span class="kanban-count">${stageDeals.length}</span>
+        </div>
+        <div class="kanban-cards" id="col-${stage}"></div>
+      `;
+      const cards = col.querySelector(`#col-${stage}`);
+      stageDeals.forEach(deal => {
+        const contact = contactById(deal.contactId);
         const card = document.createElement('div');
-        card.className = 'user-card';
+        card.className = 'deal-card';
+        const val = deal.value ? `${Number(deal.value).toLocaleString('de-DE')} €` : '';
         card.innerHTML = `
-          <div class="card-info">
-            <div class="card-name">${user.name}</div>
-            <div class="card-meta">
-              <span class="status-badge ${cls}">${label}</span>
-              ${designTag}
-              <span class="card-date">Erstellt ${date}</span>
-            </div>
-          </div>
-          <div class="card-btns">
-            <button class="btn-outline" data-copy="${user.token}">Link kopieren</button>
-            <button class="btn-open" data-open="${user.token}">Öffnen →</button>
+          <div class="deal-card-name">${contact?.name || '?'}</div>
+          <div class="deal-card-title">${deal.title}</div>
+          <div class="deal-card-meta">
+            ${val ? `<span class="badge badge-done">${val}</span>` : ''}
+            <span style="font-size:.68rem;color:var(--text-muted)">${fmtDate(deal.updatedAt)}</span>
           </div>
         `;
-
-        card.querySelector('[data-copy]').addEventListener('click', e => {
-          e.stopPropagation();
-          copyLink(user.token, e.target);
-        });
-
-        card.querySelector('[data-open]').addEventListener('click', () => openUser(user));
-        container.appendChild(card);
+        card.onclick = () => openDeal(deal);
+        cards.appendChild(card);
       });
-    }
-
-    function copyLink(token, btn) {
-      const url = shortLink(token);
-      navigator.clipboard.writeText(url).then(() => {
-        const orig = btn.textContent;
-        btn.textContent = '✓ Kopiert!';
-        setTimeout(() => { btn.textContent = orig; }, 2000);
-      });
-    }
-
-    // ===== DETAIL =====
-
-    async function openUser(user) {
-      currentUser = user;
-      currentSession = null;
-
-      const res = await apiFetch(`/api/session?token=${user.token}`);
-      if (res?.ok) {
-        const data = await res.json();
-        currentSession = data.session;
-      }
-
-      $('detail-title').textContent = user.name;
-      renderDetail();
-      show('s-detail');
-    }
-
-    function renderDetail() {
-      const user = currentUser;
-      const session = currentSession;
-      const inner = $('detail-inner');
-      inner.innerHTML = '';
-
-      // Intake banner
-      if (user.invited === false) {
-        const banner = document.createElement('div');
-        banner.className = 'intake-banner';
-        banner.innerHTML = `
-          <div style="flex:1">
-            <div style="font-weight:600;font-size:0.88rem;margin-bottom:2px;">Selbst-Registrierung</div>
-            <div style="font-size:0.78rem;color:var(--text-muted);">Dieser Kontakt hat sich über das offene Interview registriert.</div>
-          </div>
-          <button class="btn-sm" id="approve-btn">Freigeben →</button>
-        `;
-        banner.querySelector('#approve-btn').onclick = () => approveUser(user.token);
-        inner.appendChild(banner);
-      }
-
-      // Link section
-      const link = shortLink(user.token);
-      const linkSec = document.createElement('div');
-      linkSec.className = 'section';
-      linkSec.innerHTML = `
-        <div class="section-label">Interview-Link</div>
-        <div class="link-row">
-          <code class="link-code">${link}</code>
-          <button class="btn-copy-sm" id="copy-link-btn">Kopieren</button>
-        </div>
-      `;
-      linkSec.querySelector('#copy-link-btn').onclick = function() {
-        navigator.clipboard.writeText(link).then(() => {
-          this.textContent = '✓ Kopiert!';
-          setTimeout(() => { this.textContent = 'Kopieren'; }, 2000);
-        });
-      };
-      inner.appendChild(linkSec);
-
-      // Design session toggle
-      const modeSec = document.createElement('div');
-      modeSec.className = 'section';
-      modeSec.innerHTML = `
-        <div class="section-label">Interview-Modus</div>
-        <div class="toggle-row">
-          <label class="toggle-switch">
-            <input type="checkbox" id="design-toggle" ${user.designSession ? 'checked' : ''} />
-            <span class="toggle-slider"></span>
-          </label>
-          <div class="toggle-text">
-            <div class="toggle-label">Design Session</div>
-            <div class="toggle-sub">KI führt Design-Interview und generiert HTML-Mockup statt Text-Briefing</div>
-          </div>
-        </div>
-      `;
-      inner.appendChild(modeSec);
-
-      // Context section
-      const ctxSec = document.createElement('div');
-      ctxSec.className = 'section';
-      ctxSec.innerHTML = `
-        <div class="section-label">Kontext für ${user.name}</div>
-        <textarea id="edit-context" class="input" rows="4" placeholder="z. B. Unternehmer, Firma XYZ, Website für B2B-Kunden, Budget ~5k...">${user.context || ''}</textarea>
-        <button class="btn-ctx" onclick="openCtxModal()">↗ Kontext per KI-Interview sammeln</button>
-      `;
-      inner.appendChild(ctxSec);
-
-      // Stakeholder questions
-      const qSec = document.createElement('div');
-      qSec.className = 'section';
-      qSec.innerHTML = `<div class="section-label">Stakeholder-Fragen</div>`;
-
-      const qList = document.createElement('div');
-      qList.id = 'q-list';
-      (user.questions || []).forEach(q => addQuestionRow(qList, q));
-      qSec.appendChild(qList);
-
+      // Add deal button at bottom of column
       const addBtn = document.createElement('button');
-      addBtn.className = 'btn-add-q';
-      addBtn.textContent = '+ Frage hinzufügen';
-      addBtn.onclick = () => addQuestionRow(qList, '');
-      qSec.appendChild(addBtn);
-      inner.appendChild(qSec);
+      addBtn.className = 'btn-add-task';
+      addBtn.style.cssText = 'margin-top:4px;font-size:.75rem;';
+      addBtn.textContent = '+ Deal';
+      addBtn.onclick = () => { /* TODO Phase 5 */ alert('Kontakt zuerst erstellen → dann Deal aus Kontaktansicht'); };
+      col.appendChild(addBtn);
+      board.appendChild(col);
+    });
+  }
 
-      // Session
-      const sessSec = document.createElement('div');
-      sessSec.className = 'section';
-      sessSec.innerHTML = `<div class="section-label">Session</div>`;
-
-      if (session?.messages?.length > 1) {
-        const timeline = document.createElement('div');
-        timeline.className = 'timeline';
-
-        const msgToShow = session.messages.filter(m => !(m.role === 'user' && m.content === `Mein Name ist ${user.name}.`));
-        msgToShow.forEach(msg => {
-          const row = document.createElement('div');
-          row.className = `tl-row ${msg.role}`;
-          const label = msg.role === 'assistant' ? 'PO' : user.name;
-          const text = typeof msg.content === 'string' ? msg.content : '[Bild hochgeladen]';
-          row.innerHTML = `
-            <span class="tl-label">${label}</span>
-            <span class="tl-text">${text}</span>
-          `;
-          timeline.appendChild(row);
-        });
-
-        sessSec.appendChild(timeline);
-
-        if (session.briefing) {
-          const isMockup = session.briefing.startsWith('===MOCKUP===');
-          const bEl = document.createElement('div');
-          bEl.className = 'briefing-preview';
-
-          if (isMockup) {
-            const html = session.briefing.replace('===MOCKUP===', '').trim();
-            bEl.innerHTML = `
-              <div class="section-label" style="color:var(--green)">Design-Mockup</div>
-              <p style="font-size:0.8rem;color:var(--text-muted);margin:6px 0">${html.length.toLocaleString('de-DE')} Zeichen HTML generiert</p>
-              <button class="btn-copy-briefing" id="dl-mockup">Mockup herunterladen (.html)</button>
-            `;
-            bEl.querySelector('#dl-mockup').onclick = () => {
-              const blob = new Blob([html], { type: 'text/html' });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = `mockup-${user.name.toLowerCase()}.html`;
-              a.click();
-              URL.revokeObjectURL(url);
-            };
-          } else {
-            bEl.innerHTML = `
-              <div class="section-label" style="color:var(--green)">Briefing</div>
-              <pre class="briefing-raw">${session.briefing}</pre>
-              <button class="btn-copy-briefing">Briefing kopieren</button>
-            `;
-            bEl.querySelector('.btn-copy-briefing').onclick = function() {
-              navigator.clipboard.writeText(session.briefing).then(() => {
-                this.textContent = '✓ Kopiert!';
-                setTimeout(() => { this.textContent = 'Briefing kopieren'; }, 2000);
-              });
-            };
-          }
-
-          sessSec.appendChild(bEl);
-        }
-      } else {
-        sessSec.innerHTML += '<p class="session-empty">Noch kein Interview geführt.</p>';
-      }
-
-      inner.appendChild(sessSec);
-      inner.insertAdjacentHTML('beforeend', '<div style="height:40px"></div>');
-    }
-
-    function addQuestionRow(container, value) {
+  // ════════════════════════════════════════
+  //  CONTACTS
+  // ════════════════════════════════════════
+  function renderContacts() {
+    const list = $('view-contacts');
+    list.innerHTML = '';
+    if (!contacts.length) { list.innerHTML = '<div class="empty">Noch keine Kontakte.</div>'; return; }
+    contacts.forEach(c => {
+      const contactDeals = deals.filter(d => d.contactId === c.id);
       const row = document.createElement('div');
-      row.className = 'question-row';
+      row.className = 'contact-row';
       row.innerHTML = `
-        <input type="text" class="q-input" value="${value.replace(/"/g, '&quot;')}" placeholder="z. B. Was ist dein Budget?" />
-        <button class="q-remove" title="Entfernen">×</button>
+        <div class="contact-row-info">
+          <div class="contact-row-name">${c.name}</div>
+          <div class="contact-row-meta">${c.email || ''}${c.company ? ' · ' + c.company : ''} · ${contactDeals.length} Deal${contactDeals.length !== 1 ? 's' : ''}</div>
+        </div>
+        <span class="badge badge-none">${c.status || 'lead'}</span>
       `;
-      row.querySelector('.q-remove').onclick = () => row.remove();
-      container.appendChild(row);
-      const input = row.querySelector('.q-input');
-      if (!value) input.focus();
-    }
+      row.onclick = () => {
+        if (contactDeals.length === 1) { openDeal(contactDeals[0]); }
+        else if (contactDeals.length > 1) { openDeal(contactDeals[0]); } // open latest
+        else { alert('Kein Deal für diesen Kontakt. Erstelle zuerst einen Deal.'); }
+      };
+      list.appendChild(row);
+    });
+  }
 
-    async function saveCurrentUser() {
-      const context = $('edit-context')?.value ?? '';
-      const questions = Array.from(document.querySelectorAll('.q-input'))
-        .map(i => i.value.trim())
-        .filter(Boolean);
-      const designSession = $('design-toggle')?.checked ?? false;
+  // ════════════════════════════════════════
+  //  DEAL DETAIL
+  // ════════════════════════════════════════
+  async function openDeal(deal) {
+    currentDeal = deal;
+    currentContact = contactById(deal.contactId);
+    show('s-deal');
+    $('deal-title').textContent = `${currentContact?.name || '?'} — ${deal.title}`;
+    $('dl-contact-name').textContent = currentContact?.name || '?';
+    $('dl-contact-email').textContent = currentContact?.email || '';
+    $('dl-stage').value = deal.stage;
+    $('dl-value').value = deal.value || '';
+    $('dl-context').value = currentContact?.context || '';
+    switchTab('sessions');
+    loadDealData();
+  }
 
-      const res = await apiFetch(`/api/admin/users?token=${currentUser.token}`, {
-        method: 'PUT',
-        body: JSON.stringify({ context, questions, designSession }),
-      });
+  async function loadDealData() {
+    const dealId = currentDeal.id;
+    const [sessionsRes, tasksRes, activitiesRes, invoicesRes] = await Promise.all([
+      apiJson(`/api/deals/${dealId}/sessions`),
+      apiJson(`/api/deals/${dealId}/tasks`),
+      apiJson(`/api/activities?dealId=${dealId}`),
+      apiJson(`/api/invoices?dealId=${dealId}`),  // will use deals.js or invoices.js
+    ]);
+    currentSessions   = sessionsRes   || [];
+    currentTasks      = tasksRes      || [];
+    currentActivities = activitiesRes || [];
+    currentInvoices   = invoicesRes   || [];
+    renderCurrentTab();
 
-      if (res?.ok) {
-        currentUser = { ...currentUser, context, questions, designSession };
-        const idx = users.findIndex(u => u.token === currentUser.token);
-        if (idx >= 0) users[idx] = currentUser;
+    // Show "Briefing generieren" if any session has messages but no briefing
+    const hasPending = currentSessions.some(s => s.messages?.length >= 3 && !s.briefingText && s.status !== 'abgeschlossen');
+    $('complete-session-btn').style.display = hasPending ? '' : 'none';
+  }
 
-        const btn = $('save-btn');
-        btn.textContent = '✓ Gespeichert';
-        setTimeout(() => { btn.textContent = 'Speichern'; }, 2000);
-      }
-    }
+  function backToMain() {
+    show('s-main');
+    loadAll().then(() => { renderPipeline(); });
+  }
 
-    async function approveUser(token) {
-      const res = await apiFetch(`/api/admin/users?token=${token}`, {
-        method: 'PUT',
-        body: JSON.stringify({ invited: true }),
-      });
-      if (res?.ok) {
-        currentUser = { ...currentUser, invited: true };
-        const idx = users.findIndex(u => u.token === token);
-        if (idx >= 0) users[idx] = currentUser;
-        renderDetail();
-      }
-    }
+  // ════════════════════════════════════════
+  //  TABS
+  // ════════════════════════════════════════
+  function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.deal-tab').forEach((t, i) => t.classList.toggle('active', ['sessions','tasks','activities','invoices'][i] === tab));
+    ['sessions','tasks','activities','invoices'].forEach(t => $('tab-' + t).style.display = t === tab ? '' : 'none');
+    renderCurrentTab();
+  }
 
-    async function duplicateUser() {
-      const name = currentUser.name;
-      const context = $('edit-context')?.value ?? currentUser.context ?? '';
-      const questions = Array.from(document.querySelectorAll('.q-input'))
-        .map(i => i.value.trim())
-        .filter(Boolean);
+  function renderCurrentTab() {
+    if (activeTab === 'sessions')   renderSessions();
+    if (activeTab === 'tasks')      renderTasks();
+    if (activeTab === 'activities') renderActivities();
+    if (activeTab === 'invoices')   renderInvoices();
+  }
 
-      const res = await apiFetch('/api/admin/users', {
-        method: 'POST',
-        body: JSON.stringify({ name: name + ' (Kopie)', context, questions }),
-      });
+  // ════════════════════════════════════════
+  //  SESSIONS TAB
+  // ════════════════════════════════════════
+  function renderSessions() {
+    const el = $('tab-sessions');
+    el.innerHTML = '';
+    if (!currentSessions.length) { el.innerHTML = '<div class="empty">Noch keine Session.<br>Erstelle eine mit dem Button oben rechts.</div>'; return; }
+    currentSessions.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'session-card';
+      const badgeClass = s.status === 'abgeschlossen' ? 'badge-done' : s.status === 'in-bearbeitung' ? 'badge-active' : 'badge-none';
+      const shortlink = `${window.location.origin}/i/${s.token}`;
+      card.innerHTML = `
+        <div class="session-card-header">
+          <div class="session-card-title">${s.title}</div>
+          <span class="badge ${badgeClass}">${s.status}</span>
+          <button class="btn-outline" onclick="copyText('${shortlink}', this)">Link</button>
+        </div>
+        <div class="session-link">${shortlink}</div>
+      `;
 
-      if (!res?.ok) return;
-      const newUser = await res.json();
-      users.unshift(newUser);
-      openUser(newUser);
-    }
-
-    // ===== MODAL: NEW USER =====
-
-    function showModal() {
-      $('modal').classList.remove('hidden');
-      $('new-name').value = '';
-      $('new-ctx').value = '';
-      setTimeout(() => $('new-name').focus(), 50);
-    }
-
-    function hideModal() {
-      $('modal').classList.add('hidden');
-    }
-
-    async function createUser() {
-      const name = $('new-name').value.trim();
-      if (!name) { $('new-name').focus(); return; }
-
-      const context = $('new-ctx').value.trim();
-      const res = await apiFetch('/api/admin/users', {
-        method: 'POST',
-        body: JSON.stringify({ name, context, questions: [] }),
-      });
-
-      if (!res?.ok) return;
-      const user = await res.json();
-      users.unshift(user);
-      hideModal();
-      openUser(user);
-    }
-
-    // ===== CONTEXT CHAT =====
-
-    function openCtxModal() {
-      ctxMessages = [];
-      extractedCtx = '';
-      $('ctx-msgs').innerHTML = '';
-      $('ctx-preview').style.display = 'none';
-      $('ctx-apply-row').style.display = 'none';
-      $('ctx-input').value = '';
-      $('ctx-modal').classList.remove('hidden');
-      // Kick off with a silent start message
-      ctxMessages = [{ role: 'user', content: 'Starte bitte.' }];
-      runCtxCall();
-      setTimeout(() => $('ctx-input').focus(), 150);
-    }
-
-    function closeCtxModal() {
-      $('ctx-modal').classList.add('hidden');
-    }
-
-    function addCtxBubble(role, text) {
-      const el = $('ctx-msgs');
-      const div = document.createElement('div');
-      div.className = `ctx-bubble ${role}`;
-      div.textContent = text;
-      el.appendChild(div);
-      el.scrollTop = el.scrollHeight;
-    }
-
-    async function ctxSend() {
-      const input = $('ctx-input');
-      const text = input.value.trim();
-      if (!text) return;
-      ctxMessages.push({ role: 'user', content: text });
-      addCtxBubble('user', text);
-      input.value = '';
-      await runCtxCall();
-    }
-
-    async function runCtxCall() {
-      const sendBtn = $('ctx-send-btn');
-      const input = $('ctx-input');
-      sendBtn.disabled = true;
-      input.disabled = true;
-
-      try {
-        const res = await apiFetch('/api/admin/context-chat', {
-          method: 'POST',
-          body: JSON.stringify({ messages: ctxMessages }),
+      if (s.messages?.length > 0) {
+        const msgs = document.createElement('div');
+        msgs.className = 'session-msgs';
+        const relevant = s.messages.filter(m => !(m.role === 'user' && m.content?.startsWith?.('Mein Name')));
+        relevant.slice(-8).forEach(m => {
+          const row = document.createElement('div');
+          row.className = `tl-row ${m.role}`;
+          const text = typeof m.content === 'string' ? m.content : '[Bild]';
+          row.innerHTML = `<span class="tl-label">${m.role === 'assistant' ? 'PO' : currentContact?.name || 'S'}</span><span class="tl-text">${escHtml(text.slice(0, 300))}${text.length > 300 ? '…' : ''}</span>`;
+          msgs.appendChild(row);
         });
+        card.appendChild(msgs);
+      }
 
-        if (!res?.ok) return;
-        const data = await res.json();
-        const reply = data.content?.[0]?.text ?? '';
-        ctxMessages.push({ role: 'assistant', content: reply });
-
-        const match = reply.match(/===KONTEXT_START===([\s\S]*?)===KONTEXT_END===/);
-        if (match) {
-          extractedCtx = match[1].trim();
-          const before = reply.split('===KONTEXT_START===')[0].trim();
-          if (before) addCtxBubble('ai', before);
-          $('ctx-preview').textContent = extractedCtx;
-          $('ctx-preview').style.display = 'block';
-          $('ctx-apply-row').style.display = 'block';
+      if (s.briefingText) {
+        const isMockup = s.briefingText.startsWith('===MOCKUP===');
+        const box = document.createElement('div');
+        box.className = 'briefing-box';
+        if (isMockup) {
+          const html = s.briefingText.replace('===MOCKUP===', '').trim();
+          box.innerHTML = `
+            <div class="field-label" style="color:var(--green)">Design-Mockup · ${html.length.toLocaleString('de-DE')} Zeichen</div>
+            <button class="btn-copy-green" onclick="downloadMockup('${escHtml(currentContact?.name || 'mockup')}', this)">Mockup herunterladen</button>
+          `;
+          box.querySelector('.btn-copy-green')._html = html;
         } else {
-          addCtxBubble('ai', reply);
+          box.innerHTML = `
+            <div class="field-label" style="color:var(--green)">Briefing</div>
+            <pre class="briefing-raw">${escHtml(s.briefingText.replace(/===BRIEFING_START===|===BRIEFING_END===/g,'').trim())}</pre>
+            <button class="btn-copy-green" onclick="copyText(this._text, this)">Briefing kopieren</button>
+          `;
+          box.querySelector('.btn-copy-green')._text = s.briefingText;
         }
-      } finally {
-        sendBtn.disabled = false;
-        input.disabled = false;
-        input.focus();
+        card.appendChild(box);
       }
+
+      if (s.status !== 'abgeschlossen' && (s.messages?.length || 0) >= 3) {
+        const complBtn = document.createElement('button');
+        complBtn.className = 'btn-outline';
+        complBtn.style.cssText = 'width:100%;margin-top:10px;font-size:.78rem;';
+        complBtn.textContent = 'Abschließen & Briefing generieren';
+        complBtn.onclick = () => completeSession(s.id, complBtn);
+        card.appendChild(complBtn);
+      }
+
+      el.appendChild(card);
+    });
+  }
+
+  async function completeSession(sessionId, btn) {
+    if (btn) { btn.disabled = true; btn.textContent = 'Generiere…'; }
+    const updated = await apiJson('/api/session/complete', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId }),
+    });
+    if (updated) {
+      const idx = currentSessions.findIndex(s => s.id === sessionId);
+      if (idx >= 0) currentSessions[idx] = updated;
+      renderSessions();
+      loadDealData();
     }
+    if (btn) { btn.disabled = false; btn.textContent = 'Abschließen & Briefing generieren'; }
+  }
 
-    function applyCtxText() {
-      const textarea = $('edit-context');
-      if (textarea && extractedCtx) textarea.value = extractedCtx;
-      closeCtxModal();
-    }
+  // ════════════════════════════════════════
+  //  TASKS TAB
+  // ════════════════════════════════════════
+  function renderTasks() {
+    const el = $('tab-tasks');
+    el.innerHTML = '';
+    const roots = currentTasks.filter(t => !t.parentId).sort((a, b) => a.order - b.order);
+    if (!roots.length) { el.innerHTML = '<div class="empty">Keine Aufgaben.</div>'; }
+    roots.forEach(task => {
+      el.appendChild(buildTaskRow(task, false));
+      (task.subtasks || []).forEach(sub => el.appendChild(buildTaskRow(sub, true)));
+    });
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-add-task';
+    addBtn.textContent = '+ Aufgabe hinzufügen';
+    addBtn.onclick = () => showModal('modal-task');
+    el.appendChild(addBtn);
+  }
 
-    // ===== EVENTS =====
+  function buildTaskRow(task, isSub) {
+    const row = document.createElement('div');
+    row.className = 'task-row' + (isSub ? ' subtask-row' : '');
+    const done = task.status === 'erledigt';
+    row.innerHTML = `
+      <input type="checkbox" class="task-check" ${done ? 'checked' : ''} />
+      <span class="task-title ${done ? 'done' : ''}">${escHtml(task.title)}</span>
+      <span class="task-priority priority-${task.priority}">${task.priority}</span>
+      ${task.dueAt ? `<span style="font-size:.72rem;color:var(--text-muted)">${fmtDate(task.dueAt)}</span>` : ''}
+    `;
+    row.querySelector('.task-check').onchange = async (e) => {
+      const status = e.target.checked ? 'erledigt' : 'offen';
+      await api(`/api/tasks/${task.id}`, { method: 'PATCH', body: JSON.stringify({ status }) });
+      const idx = currentTasks.findIndex(t => t.id === task.id);
+      if (idx >= 0) currentTasks[idx] = { ...currentTasks[idx], status };
+      renderTasks();
+    };
+    return row;
+  }
 
-    $('pw-btn').onclick = login;
-    $('pw-input').onkeydown = e => { if (e.key === 'Enter') login(); };
+  // ════════════════════════════════════════
+  //  ACTIVITIES TAB
+  // ════════════════════════════════════════
+  function renderActivities() {
+    const el = $('tab-activities');
+    el.innerHTML = '';
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-add-note';
+    addBtn.textContent = '+ Notiz hinzufügen';
+    addBtn.onclick = () => showModal('modal-note');
+    el.appendChild(addBtn);
+    if (!currentActivities.length) { el.insertAdjacentHTML('beforeend', '<div class="empty">Noch keine Aktivitäten.</div>'); return; }
+    currentActivities.forEach(a => {
+      const row = document.createElement('div');
+      row.className = 'activity-row';
+      const icon = TYPE_ICON[a.type] || '📌';
+      row.innerHTML = `
+        <div class="activity-icon">${icon}</div>
+        <div class="activity-body">
+          <div class="activity-subject">${escHtml(a.subject || a.type)}</div>
+          <div class="activity-text">${escHtml((a.body || '').slice(0, 200))}${(a.body||'').length > 200 ? '…' : ''}</div>
+          <div class="activity-date">${fmtDateTime(a.createdAt)} · ${a.createdBy || 'philipp'}</div>
+        </div>
+      `;
+      row.querySelector('.activity-text').onclick = function() { this.classList.toggle('expanded'); };
+      el.appendChild(row);
+    });
+  }
 
-    $('new-btn').onclick = showModal;
-    $('modal-cancel').onclick = hideModal;
-    $('modal-ok').onclick = createUser;
-    $('new-name').onkeydown = e => { if (e.key === 'Enter') createUser(); };
-    $('modal').onclick = e => { if (e.target === $('modal')) hideModal(); };
+  // ════════════════════════════════════════
+  //  INVOICES TAB
+  // ════════════════════════════════════════
+  function renderInvoices() {
+    const el = $('tab-invoices');
+    el.innerHTML = '';
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-add-task';
+    addBtn.textContent = '+ Rechnung erstellen';
+    addBtn.onclick = () => createInvoiceQuick();
+    el.appendChild(addBtn);
+    if (!currentInvoices.length) { el.insertAdjacentHTML('beforeend', '<div class="empty">Noch keine Rechnungen.</div>'); return; }
+    currentInvoices.forEach(inv => {
+      const card = document.createElement('div');
+      card.className = 'invoice-card';
+      const badgeCls = { entwurf:'badge-none', versendet:'badge-active', bezahlt:'badge-done', storniert:'badge-red' }[inv.status] || 'badge-none';
+      card.innerHTML = `
+        <div class="invoice-header">
+          <span class="invoice-number">${inv.number}</span>
+          <span class="badge ${badgeCls}">${inv.status}</span>
+          <span class="invoice-amount">${(inv.amountGross || 0).toLocaleString('de-DE', {minimumFractionDigits:2})} €</span>
+        </div>
+        <div class="invoice-meta">${inv.lineItems?.length || 0} Pos. · MwSt ${inv.taxRate}% · ${fmtDate(inv.createdAt)}</div>
+      `;
+      el.appendChild(card);
+    });
+  }
 
-    $('ctx-modal').onclick = e => { if (e.target === $('ctx-modal')) closeCtxModal(); };
-    $('ctx-input').onkeydown = e => { if (e.key === 'Enter') ctxSend(); };
+  async function createInvoiceQuick() {
+    const inv = await apiJson('/api/invoices', {
+      method: 'POST',
+      body: JSON.stringify({ dealId: currentDeal.id, contactId: currentDeal.contactId, lineItems: [], taxRate: 19 }),
+    });
+    if (inv) { currentInvoices.unshift(inv); renderInvoices(); }
+  }
 
-    $('back-btn').onclick = async () => { await loadUsers(); show('s-list'); };
-    $('save-btn').onclick = saveCurrentUser;
-    $('dup-btn').onclick = duplicateUser;
+  // ════════════════════════════════════════
+  //  DEAL SIDEBAR ACTIONS
+  // ════════════════════════════════════════
+  async function saveDealStage() {
+    const stage = $('dl-stage').value;
+    const updated = await apiJson(`/api/deals/${currentDeal.id}`, { method: 'PATCH', body: JSON.stringify({ stage }) });
+    if (updated) { currentDeal = updated; const idx = deals.findIndex(d => d.id === updated.id); if (idx >= 0) deals[idx] = updated; }
+  }
 
-    // ===== INIT =====
+  async function saveDealValue() {
+    const value = parseFloat($('dl-value').value) || null;
+    const updated = await apiJson(`/api/deals/${currentDeal.id}`, { method: 'PATCH', body: JSON.stringify({ value }) });
+    if (updated) { currentDeal = updated; const idx = deals.findIndex(d => d.id === updated.id); if (idx >= 0) deals[idx] = updated; }
+  }
 
-    async function init() {
-      if (!adminToken) { show('s-login'); $('pw-input').focus(); return; }
-      const res = await fetch('/api/admin/users', { headers: { 'X-Admin-Token': adminToken } });
-      if (res.ok) {
-        users = await res.json();
-        renderList();
-        show('s-list');
+  async function saveContactContext() {
+    const context = $('dl-context').value;
+    await apiJson(`/api/contacts/${currentDeal.contactId}`, { method: 'PATCH', body: JSON.stringify({ context }) });
+    if (currentContact) currentContact.context = context;
+  }
+
+  async function deleteCurrentDeal() {
+    if (!confirm('Deal wirklich löschen?')) return;
+    // No delete endpoint yet — just update stage to "verloren"
+    await apiJson(`/api/deals/${currentDeal.id}`, { method: 'PATCH', body: JSON.stringify({ stage: 'verloren' }) });
+    backToMain();
+  }
+
+  // ════════════════════════════════════════
+  //  CREATE CONTACT + DEAL
+  // ════════════════════════════════════════
+  async function createContact() {
+    const name = $('nc-name').value.trim();
+    if (!name) { $('nc-name').focus(); return; }
+    const contact = await apiJson('/api/contacts', {
+      method: 'POST',
+      body: JSON.stringify({ name, email: $('nc-email').value.trim(), company: $('nc-company').value.trim(), context: $('nc-ctx').value.trim() }),
+    });
+    if (!contact) return;
+    contacts.unshift(contact);
+    // Auto-create a deal for the contact
+    const deal = await apiJson('/api/deals', {
+      method: 'POST',
+      body: JSON.stringify({ contactId: contact.id, title: 'Website-Projekt', stage: 'anfrage' }),
+    });
+    if (deal) deals.unshift(deal);
+    hideModal('modal-contact');
+    $('nc-name').value = ''; $('nc-email').value = ''; $('nc-company').value = ''; $('nc-ctx').value = '';
+    if (deal) openDeal(deal);
+  }
+
+  async function createSession() {
+    const type  = $('ns-type').value;
+    const title = $('ns-title').value.trim() || (type === 'design' ? 'Design-Interview' : 'Requirements-Interview');
+    const session = await apiJson(`/api/deals/${currentDeal.id}/sessions`, {
+      method: 'POST',
+      body: JSON.stringify({ type, title }),
+    });
+    if (session) { currentSessions.push(session); hideModal('modal-session'); renderSessions(); }
+  }
+
+  async function createTask() {
+    const title = $('nt-title').value.trim();
+    if (!title) { $('nt-title').focus(); return; }
+    const task = await apiJson(`/api/deals/${currentDeal.id}/tasks`, {
+      method: 'POST',
+      body: JSON.stringify({ title, priority: $('nt-priority').value, dueAt: $('nt-due').value || null }),
+    });
+    if (task) { currentTasks.push(task); hideModal('modal-task'); $('nt-title').value = ''; renderTasks(); }
+  }
+
+  async function createNote() {
+    const body = $('nn-body').value.trim();
+    if (!body) return;
+    const activity = await apiJson('/api/activities', {
+      method: 'POST',
+      body: JSON.stringify({ contactId: currentDeal.contactId, dealId: currentDeal.id, type: 'note', direction: 'internal', subject: 'Notiz', body }),
+    });
+    if (activity) { currentActivities.unshift(activity); hideModal('modal-note'); $('nn-body').value = ''; renderActivities(); }
+  }
+
+  // ════════════════════════════════════════
+  //  MODALS
+  // ════════════════════════════════════════
+  function showModal(id) { $(id).classList.remove('hidden'); }
+  function hideModal(id) { $(id).classList.add('hidden'); }
+
+  // ════════════════════════════════════════
+  //  CONTEXT CHAT (from sidebar)
+  // ════════════════════════════════════════
+  function openCtxModal() {
+    ctxMessages = [];
+    extractedCtx = '';
+    $('ctx-msgs').innerHTML = '';
+    $('ctx-preview').style.display = 'none';
+    $('ctx-apply-row').style.display = 'none';
+    $('ctx-input').value = '';
+    $('ctx-modal').classList.remove('hidden');
+    ctxMessages = [{ role: 'user', content: 'Starte bitte.' }];
+    runCtxCall();
+    setTimeout(() => $('ctx-input').focus(), 150);
+  }
+
+  function closeCtxModal() { $('ctx-modal').classList.add('hidden'); }
+
+  function addCtxBubble(role, text) {
+    const el = $('ctx-msgs');
+    const div = document.createElement('div');
+    div.className = `ctx-bubble ${role}`;
+    div.textContent = text;
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+  }
+
+  async function ctxSend() {
+    const input = $('ctx-input');
+    const text = input.value.trim();
+    if (!text) return;
+    ctxMessages.push({ role: 'user', content: text });
+    addCtxBubble('user', text);
+    input.value = '';
+    await runCtxCall();
+  }
+
+  async function runCtxCall() {
+    const sendBtn = $('ctx-send-btn'), input = $('ctx-input');
+    sendBtn.disabled = true; input.disabled = true;
+    try {
+      const res = await api('/api/admin/context-chat', { method: 'POST', body: JSON.stringify({ messages: ctxMessages }) });
+      if (!res?.ok) return;
+      const data = await res.json();
+      const reply = data.content?.[0]?.text ?? '';
+      ctxMessages.push({ role: 'assistant', content: reply });
+      const match = reply.match(/===KONTEXT_START===([\s\S]*?)===KONTEXT_END===/);
+      if (match) {
+        extractedCtx = match[1].trim();
+        const before = reply.split('===KONTEXT_START===')[0].trim();
+        if (before) addCtxBubble('ai', before);
+        $('ctx-preview').textContent = extractedCtx;
+        $('ctx-preview').style.display = 'block';
+        $('ctx-apply-row').style.display = 'block';
       } else {
-        sessionStorage.removeItem('adminToken');
-        adminToken = '';
-        show('s-login');
-        $('pw-input').focus();
+        addCtxBubble('ai', reply);
       }
+    } finally {
+      sendBtn.disabled = false; input.disabled = false; input.focus();
     }
+  }
 
-    init();
-  </script>
+  function applyCtxText() {
+    if ($('dl-context') && extractedCtx) {
+      $('dl-context').value = extractedCtx;
+      saveContactContext();
+    }
+    closeCtxModal();
+  }
+
+  // ════════════════════════════════════════
+  //  UTILS
+  // ════════════════════════════════════════
+  function fmtDate(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'2-digit' });
+  }
+  function fmtDateTime(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleString('de-DE', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+  }
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function copyText(text, btn) {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Kopiert!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    });
+  }
+  function downloadMockup(name, btn) {
+    const html = btn._html;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `mockup-${name.toLowerCase()}.html`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ════════════════════════════════════════
+  //  EVENTS
+  // ════════════════════════════════════════
+  $('pw-btn').onclick = login;
+  $('pw-input').onkeydown = e => { if (e.key === 'Enter') login(); };
+  $('new-contact-btn').onclick = () => showModal('modal-contact');
+  $('new-session-btn').onclick = () => showModal('modal-session');
+  $('complete-session-btn').onclick = async () => {
+    const pending = currentSessions.find(s => s.messages?.length >= 3 && !s.briefingText && s.status !== 'abgeschlossen');
+    if (pending) await completeSession(pending.id, $('complete-session-btn'));
+  };
+  $('ctx-modal').onclick = e => { if (e.target === $('ctx-modal')) closeCtxModal(); };
+  $('ctx-input').onkeydown = e => { if (e.key === 'Enter') ctxSend(); };
+
+  // Close modals on backdrop click
+  ['modal-contact','modal-session','modal-task','modal-note'].forEach(id => {
+    $(id).onclick = e => { if (e.target === $(id)) hideModal(id); };
+  });
+
+  // ════════════════════════════════════════
+  //  INIT
+  // ════════════════════════════════════════
+  async function init() {
+    if (!adminToken) { show('s-login'); $('pw-input').focus(); return; }
+    const res = await fetch('/api/contacts', { headers: { 'X-Admin-Token': adminToken } });
+    if (res.ok) {
+      contacts = await res.json();
+      deals = (await apiJson('/api/deals')) || [];
+      renderPipeline();
+      show('s-main');
+    } else {
+      sessionStorage.removeItem('adminToken');
+      adminToken = '';
+      show('s-login');
+      $('pw-input').focus();
+    }
+  }
+
+  init();
+</script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const { getAllInvoices, createInvoice, getInvoice, updateInvoice, getNextInvoiceNumber } = require('../lib/kv');
+const { getAllInvoices, createInvoice, getInvoice, updateInvoice, getNextInvoiceNumber, getInvoicesByDeal } = require('../lib/kv');
 
 function checkAuth(req, res) {
   const pw = process.env.ADMIN_PASSWORD;
@@ -40,9 +40,10 @@ module.exports = async function handler(req, res) {
     return res.status(405).end();
   }
 
-  // /api/invoices
+  // /api/invoices (optional ?dealId= filter)
   if (req.method === 'GET') {
-    const invoices = await getAllInvoices();
+    const { dealId } = req.query;
+    const invoices = dealId ? await getInvoicesByDeal(dealId) : await getAllInvoices();
     return res.status(200).json(invoices.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
   }
 

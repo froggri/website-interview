@@ -32,11 +32,78 @@ module.exports = async function handler(req, res) {
     if (!sessionId) return res.status(400).json({ error: 'sessionId required' });
     const session = await getSessionById(sessionId);
     if (!session) return res.status(404).json({ error: 'session not found' });
+
+    let briefingText = session.briefingText;
+    let briefingJson = session.briefingJson;
+
+    // Generate dual briefing from transcript if we have messages but no briefing yet
+    const msgs = session.messages || [];
+    const hasConversation = msgs.filter(m => m.role === 'user').length >= 3;
+    if (hasConversation && !briefingText && process.env.ANTHROPIC_API_KEY) {
+      const transcript = msgs
+        .map(m => `${m.role === 'assistant' ? 'PO' : 'Stakeholder'}: ${typeof m.content === 'string' ? m.content : '[Bild]'}`)
+        .join('\n\n');
+
+      const briefingPrompt = `Du bist Business Analyst. Analysiere dieses Interview-Transkript und erstelle ein vollständiges Briefing in zwei Formaten.
+
+TRANSKRIPT:
+${transcript}
+
+Erstelle exakt folgende zwei Blöcke — nichts davor, nichts danach:
+
+===BRIEFING_START===
+NAME: [Vorname des Stakeholders]
+BERUF: [Beruf/Business in 1-2 Sätzen]
+ZIELGRUPPE: [Zielgruppe, 2-3 Sätze]
+KERNBOTSCHAFT: [Was die Website kommunizieren soll, 1 Satz]
+USP: [Alleinstellungsmerkmale, 2-3 Punkte]
+STRUKTUR: [Gewünschte Seiten/Bereiche]
+STIL: [Tonalität, Stil, Referenzen]
+ZIEL: [Primäres Website-Ziel]
+TECHNIK: [Technische Anforderungen]
+AUSSCHLUESSE: [Was nicht auf die Website soll]
+BESONDERHEITEN: [Weitere wichtige Infos]
+===BRIEFING_END===
+
+===BRIEFING_JSON_START===
+{"name":"...","beruf":"...","zielgruppe":"...","kernbotschaft":"...","usp":["..."],"struktur":["..."],"stil":"...","ziel":"...","technik":["..."],"ausschluesse":["..."],"besonderheiten":"..."}
+===BRIEFING_JSON_END===`;
+
+      try {
+        const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.ANTHROPIC_API_KEY,
+            'anthropic-version': '2023-06-01',
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 2048,
+            messages: [{ role: 'user', content: briefingPrompt }],
+          }),
+        });
+        if (aiRes.ok) {
+          const aiData = await aiRes.json();
+          const reply = aiData.content?.[0]?.text ?? '';
+          const textMatch = reply.match(/===BRIEFING_START===([\s\S]*?)===BRIEFING_END===/);
+          const jsonMatch = reply.match(/===BRIEFING_JSON_START===([\s\S]*?)===BRIEFING_JSON_END===/);
+          if (textMatch) briefingText = textMatch[0];
+          if (jsonMatch) {
+            try { briefingJson = JSON.parse(jsonMatch[1].trim()); } catch {}
+          }
+        }
+      } catch {}
+    }
+
     const updated = await updateSessionById(sessionId, {
       status: 'abgeschlossen',
       completedAt: new Date().toISOString(),
+      briefingText,
+      briefingJson,
     });
-    if (session.briefingText) {
+
+    if (briefingText) {
       await createActivity({
         contactId: session.contactId,
         dealId:    session.dealId,
@@ -44,7 +111,7 @@ module.exports = async function handler(req, res) {
         type:      'session-summary',
         direction: 'internal',
         subject:   `Briefing: ${session.title}`,
-        body:      session.briefingText,
+        body:      briefingText,
         createdBy: 'ai',
       });
     }
