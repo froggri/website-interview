@@ -1,5 +1,29 @@
 const { getUser, getSession, saveSession, saveUser } = require('../lib/kv');
 
+const DESIGN_PROMPT = `Du bist ein erfahrener UI/UX Designer und Creative Director, der im Auftrag von Philipp ein Design-Briefing Interview führt. Philipp baut eine Website für diese Person.
+
+Führe ein natürliches Gespräch über Design-Präferenzen. Stelle immer nur EINE Frage pro Nachricht.
+
+Themen (organisch einbauen):
+1. Lieblingsfarben und welche Farben abgelehnt werden
+2. Welche Websites oder Marken visuell gefallen (Referenzen)
+3. Stimmung: minimalistisch oder aufwändig? Modern oder klassisch?
+4. Typografie: sachlich, verspielt, elegant oder technisch?
+5. Bildsprache: Fotos, Illustrationen, Icons, abstrakt?
+6. Welches Gefühl soll die Website beim Besucher auslösen?
+
+Nach 5-6 Fragen: Erstelle ein vollständiges responsives One-Page-Mockup als HTML/CSS.
+
+Das Mockup soll professionelle Qualität haben, alle Design-Entscheidungen widerspiegeln und realistische Platzhalter-Inhalte enthalten. Nur inline CSS, keine externen Abhängigkeiten.
+
+Beende exakt mit diesem Format (kein Text danach):
+===MOCKUP_START===
+<!DOCTYPE html>
+[vollständiges HTML mit inline CSS]
+===MOCKUP_END===
+
+Antworte auf Deutsch. Beginne mit herzlicher Begrüßung.`;
+
 const BASE_PROMPT = `Du bist ein erfahrener Product Owner und strategischer Berater, der im Auftrag von Philipp ein strukturiertes Website-Briefing-Interview führt. Philipp ist ein guter Freund, der für seinen Gesprächspartner eine professionelle Website bauen möchte.
 
 Führe ein natürliches, empathisches Gespräch. Stelle immer nur EINE Frage pro Nachricht. Hak nach wenn Antworten zu oberflächlich sind. Bestätige gute Antworten kurz bevor du zur nächsten Frage gehst.
@@ -37,7 +61,7 @@ BESONDERHEITEN: [Alles andere Wichtige]
 Antworte immer auf Deutsch. Beginne mit herzlicher Begrüßung, nenne den Namen der Person, erkläre kurz was ihr heute macht.`;
 
 function buildSystemPrompt(user) {
-  let p = BASE_PROMPT;
+  let p = user?.designSession ? DESIGN_PROMPT : BASE_PROMPT;
   if (user?.context) {
     p += `\n\nHintergrund zu ${user.name} (von Philipp vorab notiert): ${user.context}`;
   }
@@ -77,6 +101,8 @@ module.exports = async function handler(req, res) {
     [user, existingSession] = await Promise.all([getUser(token), getSession(token)]);
   }
 
+  const isDesign = user?.designSession;
+
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -86,7 +112,7 @@ module.exports = async function handler(req, res) {
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
+      max_tokens: isDesign ? 4096 : 1024,
       system: buildSystemPrompt(user),
       messages,
     }),
@@ -100,9 +126,19 @@ module.exports = async function handler(req, res) {
   const reply = data.content?.[0]?.text ?? '';
 
   if (token && user) {
-    const allMsgs = [...messages, { role: 'assistant', content: reply }];
+    const mockupMatch = reply.match(/===MOCKUP_START===([\s\S]*?)===MOCKUP_END===/);
     const briefingMatch = reply.match(/===BRIEFING_START===([\s\S]*?)===BRIEFING_END===/);
-    const briefing = briefingMatch ? briefingMatch[0] : (existingSession?.briefing ?? null);
+
+    const replyForStorage = mockupMatch
+      ? reply.replace(/===MOCKUP_START===([\s\S]*?)===MOCKUP_END===/, '[HTML-Mockup generiert]')
+      : reply;
+
+    const allMsgs = [...messages, { role: 'assistant', content: replyForStorage }];
+
+    let briefing = existingSession?.briefing ?? null;
+    if (briefingMatch) briefing = briefingMatch[0];
+    if (mockupMatch) briefing = '===MOCKUP===' + mockupMatch[1].trim();
+
     const sessionStatus = briefing ? 'completed' : 'in_progress';
 
     await Promise.all([

@@ -34,7 +34,7 @@
     .screen { display: none; flex-direction: column; height: 100dvh; }
     .screen.active { display: flex; }
 
-    /* ===== INFO SCREENS (notoken / invalid) ===== */
+    /* ===== INFO SCREENS ===== */
 
     .info-screen {
       display: none;
@@ -94,6 +94,32 @@
     .setup-card h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.35; }
     .setup-card .sub { color: var(--text-muted); margin-top: 10px; line-height: 1.65; font-size: 0.88rem; }
     .setup-divider { height: 1px; background: var(--border); margin: 26px 0; }
+
+    .field-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+    }
+
+    .field-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-size: 0.93rem;
+      padding: 10px 13px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .15s;
+      margin-bottom: 16px;
+    }
+
+    .field-input:focus { border-color: var(--accent); }
+    .field-input::placeholder { color: #383848; }
 
     #start-btn {
       width: 100%;
@@ -334,17 +360,32 @@
     }
 
     .raw-block.show { display: block; }
+
+    .intake-done {
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    .intake-done .done-icon {
+      width: 56px; height: 56px;
+      background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.25);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .intake-done h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; }
+    .intake-done p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; max-width: 340px; margin: 0 auto; }
+
+    .mockup-frame {
+      width: 100%; height: 460px;
+      border: 1px solid var(--border); border-radius: 12px;
+      margin: 16px 0;
+    }
+
     .bottom-space { height: 36px; }
   </style>
 </head>
 <body>
-
-  <!-- ======= NO TOKEN ======= -->
-  <div id="screen-notoken" class="info-screen">
-    <div class="info-icon">🔗</div>
-    <h2>Kein gültiger Link</h2>
-    <p>Du brauchst einen persönlichen Einladungslink von Philipp,<br>um das Interview zu starten.</p>
-  </div>
 
   <!-- ======= INVALID TOKEN ======= -->
   <div id="screen-invalid" class="info-screen">
@@ -361,12 +402,16 @@
         Philipps PO-Assistent
       </div>
       <h1 id="welcome-h1">Hey!</h1>
-      <p class="sub">
+      <p class="sub" id="welcome-sub">
         Philipp möchte eine professionelle Website für dich bauen.
         Damit das Ergebnis wirklich passt, führe ich zuerst ein kurzes Interview mit dir durch —
         dauert etwa 15 Minuten.
       </p>
       <div class="setup-divider"></div>
+      <div id="name-input-area" style="display:none">
+        <div class="field-label">Dein Vorname</div>
+        <input id="name-input" class="field-input" type="text" placeholder="z. B. Micha" autocomplete="off" />
+      </div>
       <button id="start-btn">
         Interview starten
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
@@ -430,8 +475,8 @@
         </svg>
       </div>
       <div>
-        <div style="font-weight:600;font-size:0.9rem;">Interview abgeschlossen</div>
-        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">Briefing bereit für Philipp</div>
+        <div style="font-weight:600;font-size:0.9rem;" id="briefing-header-title">Interview abgeschlossen</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;" id="briefing-header-sub">Briefing bereit für Philipp</div>
       </div>
     </header>
     <div id="briefing-content"></div>
@@ -447,7 +492,9 @@
     };
 
     const urlToken = new URLSearchParams(window.location.search).get('token');
-    let token = urlToken;
+    let token = urlToken || localStorage.getItem('interviewToken') || '';
+    let isIntakeSession = !urlToken; // came without invitation link
+    let isInvitedUser = true;
     let userName = '';
     let messages = [];
     let userMsgCount = 0;
@@ -546,7 +593,12 @@
         const reply = data.content?.[0]?.text ?? '';
         messages.push({ role: 'assistant', content: reply });
 
-        if (reply.includes('===BRIEFING_START===')) {
+        if (reply.includes('===MOCKUP_START===')) {
+          const before = reply.split('===MOCKUP_START===')[0].trim();
+          if (before) addBubble('ai', before);
+          const m = reply.match(/===MOCKUP_START===([\s\S]*?)===MOCKUP_END===/);
+          if (m) setTimeout(() => renderMockup(m[1].trim()), 700);
+        } else if (reply.includes('===BRIEFING_START===')) {
           const before = reply.split('===BRIEFING_START===')[0].trim();
           if (before) addBubble('ai', before);
           setTimeout(() => renderBriefing(reply), 700);
@@ -572,6 +624,32 @@
     }
 
     async function startInterview() {
+      if (!token) {
+        const name = $('name-input').value.trim();
+        if (!name) { $('name-input').focus(); return; }
+        userName = name;
+
+        $('start-btn').disabled = true;
+        $('start-btn').textContent = 'Einen Moment…';
+
+        try {
+          const res = await fetch('/api/intake', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name }),
+          });
+          if (!res.ok) throw new Error('Fehler beim Starten');
+          const data = await res.json();
+          token = data.token;
+          localStorage.setItem('interviewToken', token);
+        } catch (err) {
+          $('start-btn').disabled = false;
+          $('start-btn').textContent = 'Interview starten →';
+          addBubble?.('error', err.message);
+          return;
+        }
+      }
+
       messages = [{ role: 'user', content: `Mein Name ist ${userName}.` }];
       userMsgCount = 0;
       updateProgress();
@@ -629,6 +707,26 @@
       const inner = document.createElement('div');
       inner.className = 'briefing-inner';
 
+      if (!isInvitedUser) {
+        const done = document.createElement('div');
+        done.className = 'intake-done';
+        done.innerHTML = `
+          <div class="done-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M3 11l5.5 5.5L19 5" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2>Briefing abgeschlossen!</h2>
+          <p>Dein Briefing ist bei Philipp angekommen.<br>Er meldet sich bald bei dir.</p>
+        `;
+        inner.appendChild(done);
+        container.appendChild(inner);
+        $('briefing-header-title').textContent = 'Fertig!';
+        $('briefing-header-sub').textContent = 'Briefing ist bei Philipp angekommen';
+        switchScreen('briefing');
+        return;
+      }
+
       const hero = document.createElement('div');
       hero.className = 'briefing-hero';
       hero.innerHTML = `
@@ -684,6 +782,52 @@
       switchScreen('briefing');
     }
 
+    function renderMockup(html) {
+      const container = $('briefing-content');
+      container.innerHTML = '';
+
+      const inner = document.createElement('div');
+      inner.className = 'briefing-inner';
+
+      const hero = document.createElement('div');
+      hero.className = 'briefing-hero';
+      hero.innerHTML = `
+        <h2>Design-Mockup für ${userName}</h2>
+        <p>Erstellt am ${new Date().toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+      `;
+      inner.appendChild(hero);
+
+      const frame = document.createElement('iframe');
+      frame.srcdoc = html;
+      frame.className = 'mockup-frame';
+      inner.appendChild(frame);
+
+      const actions = document.createElement('div');
+      actions.className = 'briefing-actions';
+
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn-copy';
+      downloadBtn.textContent = 'Mockup herunterladen (.html)';
+      downloadBtn.onclick = () => {
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `design-mockup-${userName.toLowerCase()}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      actions.appendChild(downloadBtn);
+      inner.appendChild(actions);
+      inner.appendChild(Object.assign(document.createElement('div'), { className: 'bottom-space' }));
+      container.appendChild(inner);
+
+      $('briefing-header-title').textContent = 'Design-Mockup fertig';
+      $('briefing-header-sub').textContent = 'Für Philipp & zum Download';
+      switchScreen('briefing');
+    }
+
     // ===== IMAGE UPLOAD =====
 
     $('file-input').addEventListener('change', () => {
@@ -717,23 +861,47 @@
       el.style.height = 'auto';
       el.style.height = Math.min(el.scrollHeight, 130) + 'px';
     });
+    $('name-input')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') startInterview();
+    });
 
     // ===== INIT =====
 
     async function init() {
-      if (!token) { switchScreen('notoken'); return; }
+      if (!token) {
+        $('name-input-area').style.display = 'block';
+        switchScreen('setup');
+        setTimeout(() => $('name-input').focus(), 100);
+        return;
+      }
 
       try {
         const res = await fetch(`/api/session?token=${token}`);
-        if (!res.ok) { switchScreen('invalid'); return; }
+        if (!res.ok) {
+          if (isIntakeSession) {
+            localStorage.removeItem('interviewToken');
+            token = '';
+            $('name-input-area').style.display = 'block';
+            switchScreen('setup');
+            setTimeout(() => $('name-input').focus(), 100);
+          } else {
+            switchScreen('invalid');
+          }
+          return;
+        }
 
         const { user, session } = await res.json();
         userName = user.name;
+        isInvitedUser = user.invited !== false;
         $('welcome-h1').textContent = `Hey ${userName},`;
         $('header-sub').textContent = `Interview mit ${userName}`;
 
         if (session?.briefing) {
-          renderBriefing(session.briefing);
+          if (session.briefing.startsWith('===MOCKUP===')) {
+            renderMockup(session.briefing.replace('===MOCKUP===', '').trim());
+          } else {
+            renderBriefing(session.briefing);
+          }
         } else if (session?.messages?.length > 1) {
           messages = session.messages;
           userMsgCount = session.messages.filter(m => m.role === 'user').length - 1;

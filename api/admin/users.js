@@ -28,8 +28,8 @@ module.exports = async function handler(req, res) {
   if (req.method === 'POST') {
     const { name, context = '', questions = [] } = req.body || {};
     if (!name) return res.status(400).json({ error: 'name required' });
-    const token = crypto.randomBytes(8).toString('hex');
-    const user = { token, name, context, questions, createdAt: new Date().toISOString() };
+    const token = crypto.randomBytes(4).toString('hex');
+    const user = { token, name, context, questions, invited: true, createdAt: new Date().toISOString() };
     await saveUser(token, user);
     return res.status(201).json(user);
   }
@@ -39,13 +39,15 @@ module.exports = async function handler(req, res) {
     if (!token) return res.status(400).json({ error: 'token required' });
     const existing = await getUser(token);
     if (!existing) return res.status(404).json({ error: 'not found' });
-    const { name, context, questions } = req.body || {};
+    const body = req.body || {};
     const updated = {
       ...existing,
-      name: name ?? existing.name,
-      context: context ?? existing.context,
-      questions: questions ?? existing.questions,
+      name: body.name ?? existing.name,
+      context: body.context ?? existing.context,
+      questions: body.questions ?? existing.questions,
     };
+    if ('invited' in body) updated.invited = body.invited;
+    if ('designSession' in body) updated.designSession = body.designSession;
     await saveUser(token, updated);
     return res.status(200).json(updated);
   }

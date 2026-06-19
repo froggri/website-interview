@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/i/:code", "destination": "/?token=:code" },
     { "source": "/api/(.*)", "destination": "/api/$1" }
   ]
 }

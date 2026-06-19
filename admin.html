@@ -116,7 +116,7 @@
       padding: 12px 18px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-shrink: 0;
       background: var(--bg);
     }
@@ -148,9 +148,25 @@
       cursor: pointer;
       font-family: inherit;
       transition: color .15s;
+      white-space: nowrap;
     }
 
     .btn-ghost:hover { color: var(--text); }
+
+    .btn-dup {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: border-color .15s, color .15s;
+    }
+
+    .btn-dup:hover { border-color: var(--accent); color: var(--text); }
 
     /* ===== USER LIST ===== */
 
@@ -189,7 +205,7 @@
 
     .card-info { flex: 1; min-width: 0; }
     .card-name { font-weight: 600; font-size: 0.95rem; }
-    .card-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .card-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
 
     .status-badge {
       font-size: 0.68rem;
@@ -199,9 +215,10 @@
       letter-spacing: .04em;
     }
 
-    .status-none  { background: rgba(107,114,128,.15); color: #9ca3af; }
+    .status-none   { background: rgba(107,114,128,.15); color: #9ca3af; }
     .status-active { background: rgba(245,158,11,.12); color: var(--amber); }
     .status-done   { background: rgba(16,185,129,.12); color: var(--green); }
+    .status-intake { background: rgba(124,110,247,.15); color: #a78bfa; }
 
     .card-date { font-size: 0.72rem; color: var(--text-muted); }
 
@@ -261,6 +278,17 @@
       margin-bottom: 8px;
     }
 
+    .intake-banner {
+      background: rgba(124,110,247,.08);
+      border: 1px solid rgba(124,110,247,.2);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
     .link-row {
       display: flex;
       align-items: center;
@@ -297,6 +325,73 @@
     }
 
     .btn-copy-sm:hover { opacity: .85; }
+
+    .btn-ctx {
+      background: transparent;
+      color: var(--accent);
+      border: 1px dashed var(--accent-border);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: inherit;
+      width: 100%;
+      margin-top: 6px;
+      transition: background .15s;
+    }
+
+    .btn-ctx:hover { background: var(--accent-glow); }
+
+    /* ===== TOGGLE ===== */
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #3a3a4a;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform .2s;
+    }
+
+    .toggle-switch input:checked + .toggle-slider { background: var(--accent); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+    .toggle-text { flex: 1; }
+    .toggle-label { font-size: 0.88rem; font-weight: 500; }
+    .toggle-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ===== QUESTIONS ===== */
 
     .question-row {
       display: flex;
@@ -352,18 +447,9 @@
 
     .session-empty { color: var(--text-muted); font-size: 0.85rem; font-style: italic; }
 
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .timeline { display: flex; flex-direction: column; gap: 8px; }
 
-    .tl-row {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-
+    .tl-row { display: flex; gap: 8px; align-items: flex-start; }
     .tl-row.assistant { flex-direction: row; }
     .tl-row.user { flex-direction: row-reverse; }
 
@@ -479,6 +565,89 @@
     }
 
     .btn-cancel:hover { border-color: var(--accent); color: var(--text); }
+
+    /* ===== CONTEXT CHAT MODAL ===== */
+
+    #ctx-modal .modal-card {
+      max-width: 520px;
+      padding: 24px 22px;
+      gap: 0;
+    }
+
+    .ctx-msgs {
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-height: 130px;
+      max-height: 260px;
+      margin: 14px 0;
+    }
+
+    .ctx-msgs::-webkit-scrollbar { width: 3px; }
+    .ctx-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .ctx-bubble {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.83rem;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+
+    .ctx-bubble.ai {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      align-self: flex-start;
+      max-width: 90%;
+    }
+
+    .ctx-bubble.user {
+      background: var(--accent-glow);
+      border: 1px solid var(--accent-border);
+      align-self: flex-end;
+      max-width: 90%;
+    }
+
+    .ctx-preview {
+      background: rgba(16,185,129,.06);
+      border: 1px solid rgba(16,185,129,.2);
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-size: 0.83rem;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .ctx-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .ctx-input-row .input {
+      flex: 1;
+      padding: 9px 12px;
+      font-size: 0.88rem;
+    }
+
+    .ctx-send-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity .15s;
+      white-space: nowrap;
+    }
+
+    .ctx-send-btn:hover { opacity: .85; }
+    .ctx-send-btn:disabled { opacity: .4; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -506,8 +675,9 @@
   <!-- ===== DETAIL ===== -->
   <div id="s-detail" class="screen">
     <div class="topbar">
-      <button id="back-btn" class="btn-ghost">← Alle Kontakte</button>
+      <button id="back-btn" class="btn-ghost">← Alle</button>
       <span id="detail-title" class="topbar-title"></span>
+      <button id="dup-btn" class="btn-dup">Duplizieren</button>
       <button id="save-btn" class="btn-sm">Speichern</button>
     </div>
     <div class="detail-scroll">
@@ -530,11 +700,33 @@
     </div>
   </div>
 
+  <!-- ===== MODAL: CONTEXT CHAT ===== -->
+  <div id="ctx-modal" class="modal-bg hidden">
+    <div class="modal-card">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <h3 style="flex:1;font-size:1rem;">Kontext sammeln</h3>
+        <button onclick="closeCtxModal()" class="btn-ghost" style="font-size:1.3rem;padding:0 4px;">×</button>
+      </div>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;">Chat mit der KI über die Person — sie extrahiert automatisch den Kontext.</p>
+      <div id="ctx-msgs" class="ctx-msgs"></div>
+      <div id="ctx-preview" class="ctx-preview"></div>
+      <div class="ctx-input-row">
+        <input id="ctx-input" type="text" class="input" placeholder="Über die Person erzählen…" />
+        <button id="ctx-send-btn" class="ctx-send-btn" onclick="ctxSend()">Senden</button>
+      </div>
+      <div id="ctx-apply-row" style="display:none;margin-top:10px;">
+        <button onclick="applyCtxText()" class="btn-primary" style="margin-top:0;">Kontext übernehmen →</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let adminToken = sessionStorage.getItem('adminToken') || '';
     let users = [];
     let currentUser = null;
     let currentSession = null;
+    let ctxMessages = [];
+    let extractedCtx = '';
 
     const $ = id => document.getElementById(id);
 
@@ -590,9 +782,14 @@
     }
 
     function statusInfo(user) {
+      if (user.invited === false) return { label: 'Eingang', cls: 'status-intake' };
       if (user.sessionStatus === 'completed') return { label: 'Abgeschlossen', cls: 'status-done' };
       if (user.sessionStatus === 'in_progress') return { label: 'Läuft', cls: 'status-active' };
       return { label: 'Kein Interview', cls: 'status-none' };
+    }
+
+    function shortLink(token) {
+      return `${window.location.origin}/i/${token}`;
     }
 
     function renderList() {
@@ -607,6 +804,7 @@
       users.forEach(user => {
         const { label, cls } = statusInfo(user);
         const date = new Date(user.createdAt).toLocaleDateString('de-DE');
+        const designTag = user.designSession ? '<span class="status-badge status-intake" style="font-size:0.62rem;">Design</span>' : '';
 
         const card = document.createElement('div');
         card.className = 'user-card';
@@ -615,6 +813,7 @@
             <div class="card-name">${user.name}</div>
             <div class="card-meta">
               <span class="status-badge ${cls}">${label}</span>
+              ${designTag}
               <span class="card-date">Erstellt ${date}</span>
             </div>
           </div>
@@ -635,7 +834,7 @@
     }
 
     function copyLink(token, btn) {
-      const url = `${window.location.origin}?token=${token}`;
+      const url = shortLink(token);
       navigator.clipboard.writeText(url).then(() => {
         const orig = btn.textContent;
         btn.textContent = '✓ Kopiert!';
@@ -666,8 +865,23 @@
       const inner = $('detail-inner');
       inner.innerHTML = '';
 
+      // Intake banner
+      if (user.invited === false) {
+        const banner = document.createElement('div');
+        banner.className = 'intake-banner';
+        banner.innerHTML = `
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:0.88rem;margin-bottom:2px;">Selbst-Registrierung</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">Dieser Kontakt hat sich über das offene Interview registriert.</div>
+          </div>
+          <button class="btn-sm" id="approve-btn">Freigeben →</button>
+        `;
+        banner.querySelector('#approve-btn').onclick = () => approveUser(user.token);
+        inner.appendChild(banner);
+      }
+
       // Link section
-      const link = `${window.location.origin}?token=${user.token}`;
+      const link = shortLink(user.token);
       const linkSec = document.createElement('div');
       linkSec.className = 'section';
       linkSec.innerHTML = `
@@ -685,19 +899,38 @@
       };
       inner.appendChild(linkSec);
 
+      // Design session toggle
+      const modeSec = document.createElement('div');
+      modeSec.className = 'section';
+      modeSec.innerHTML = `
+        <div class="section-label">Interview-Modus</div>
+        <div class="toggle-row">
+          <label class="toggle-switch">
+            <input type="checkbox" id="design-toggle" ${user.designSession ? 'checked' : ''} />
+            <span class="toggle-slider"></span>
+          </label>
+          <div class="toggle-text">
+            <div class="toggle-label">Design Session</div>
+            <div class="toggle-sub">KI führt Design-Interview und generiert HTML-Mockup statt Text-Briefing</div>
+          </div>
+        </div>
+      `;
+      inner.appendChild(modeSec);
+
       // Context section
       const ctxSec = document.createElement('div');
       ctxSec.className = 'section';
       ctxSec.innerHTML = `
         <div class="section-label">Kontext für ${user.name}</div>
         <textarea id="edit-context" class="input" rows="4" placeholder="z. B. Unternehmer, Firma XYZ, Website für B2B-Kunden, Budget ~5k...">${user.context || ''}</textarea>
+        <button class="btn-ctx" onclick="openCtxModal()">↗ Kontext per KI-Interview sammeln</button>
       `;
       inner.appendChild(ctxSec);
 
       // Stakeholder questions
       const qSec = document.createElement('div');
       qSec.className = 'section';
-      qSec.innerHTML = `<div class="section-label">Stakeholder-Fragen (von Claude PO / Philipp)</div>`;
+      qSec.innerHTML = `<div class="section-label">Stakeholder-Fragen</div>`;
 
       const qList = document.createElement('div');
       qList.id = 'q-list';
@@ -736,19 +969,40 @@
         sessSec.appendChild(timeline);
 
         if (session.briefing) {
+          const isMockup = session.briefing.startsWith('===MOCKUP===');
           const bEl = document.createElement('div');
           bEl.className = 'briefing-preview';
-          bEl.innerHTML = `
-            <div class="section-label" style="color:var(--green)">Briefing</div>
-            <pre class="briefing-raw">${session.briefing}</pre>
-            <button class="btn-copy-briefing">Briefing kopieren</button>
-          `;
-          bEl.querySelector('.btn-copy-briefing').onclick = function() {
-            navigator.clipboard.writeText(session.briefing).then(() => {
-              this.textContent = '✓ Kopiert!';
-              setTimeout(() => { this.textContent = 'Briefing kopieren'; }, 2000);
-            });
-          };
+
+          if (isMockup) {
+            const html = session.briefing.replace('===MOCKUP===', '').trim();
+            bEl.innerHTML = `
+              <div class="section-label" style="color:var(--green)">Design-Mockup</div>
+              <p style="font-size:0.8rem;color:var(--text-muted);margin:6px 0">${html.length.toLocaleString('de-DE')} Zeichen HTML generiert</p>
+              <button class="btn-copy-briefing" id="dl-mockup">Mockup herunterladen (.html)</button>
+            `;
+            bEl.querySelector('#dl-mockup').onclick = () => {
+              const blob = new Blob([html], { type: 'text/html' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `mockup-${user.name.toLowerCase()}.html`;
+              a.click();
+              URL.revokeObjectURL(url);
+            };
+          } else {
+            bEl.innerHTML = `
+              <div class="section-label" style="color:var(--green)">Briefing</div>
+              <pre class="briefing-raw">${session.briefing}</pre>
+              <button class="btn-copy-briefing">Briefing kopieren</button>
+            `;
+            bEl.querySelector('.btn-copy-briefing').onclick = function() {
+              navigator.clipboard.writeText(session.briefing).then(() => {
+                this.textContent = '✓ Kopiert!';
+                setTimeout(() => { this.textContent = 'Briefing kopieren'; }, 2000);
+              });
+            };
+          }
+
           sessSec.appendChild(bEl);
         }
       } else {
@@ -777,14 +1031,15 @@
       const questions = Array.from(document.querySelectorAll('.q-input'))
         .map(i => i.value.trim())
         .filter(Boolean);
+      const designSession = $('design-toggle')?.checked ?? false;
 
       const res = await apiFetch(`/api/admin/users?token=${currentUser.token}`, {
         method: 'PUT',
-        body: JSON.stringify({ context, questions }),
+        body: JSON.stringify({ context, questions, designSession }),
       });
 
       if (res?.ok) {
-        currentUser = { ...currentUser, context, questions };
+        currentUser = { ...currentUser, context, questions, designSession };
         const idx = users.findIndex(u => u.token === currentUser.token);
         if (idx >= 0) users[idx] = currentUser;
 
@@ -794,7 +1049,38 @@
       }
     }
 
-    // ===== MODAL =====
+    async function approveUser(token) {
+      const res = await apiFetch(`/api/admin/users?token=${token}`, {
+        method: 'PUT',
+        body: JSON.stringify({ invited: true }),
+      });
+      if (res?.ok) {
+        currentUser = { ...currentUser, invited: true };
+        const idx = users.findIndex(u => u.token === token);
+        if (idx >= 0) users[idx] = currentUser;
+        renderDetail();
+      }
+    }
+
+    async function duplicateUser() {
+      const name = currentUser.name;
+      const context = $('edit-context')?.value ?? currentUser.context ?? '';
+      const questions = Array.from(document.querySelectorAll('.q-input'))
+        .map(i => i.value.trim())
+        .filter(Boolean);
+
+      const res = await apiFetch('/api/admin/users', {
+        method: 'POST',
+        body: JSON.stringify({ name: name + ' (Kopie)', context, questions }),
+      });
+
+      if (!res?.ok) return;
+      const newUser = await res.json();
+      users.unshift(newUser);
+      openUser(newUser);
+    }
+
+    // ===== MODAL: NEW USER =====
 
     function showModal() {
       $('modal').classList.remove('hidden');
@@ -824,6 +1110,86 @@
       openUser(user);
     }
 
+    // ===== CONTEXT CHAT =====
+
+    function openCtxModal() {
+      ctxMessages = [];
+      extractedCtx = '';
+      $('ctx-msgs').innerHTML = '';
+      $('ctx-preview').style.display = 'none';
+      $('ctx-apply-row').style.display = 'none';
+      $('ctx-input').value = '';
+      $('ctx-modal').classList.remove('hidden');
+      // Kick off with a silent start message
+      ctxMessages = [{ role: 'user', content: 'Starte bitte.' }];
+      runCtxCall();
+      setTimeout(() => $('ctx-input').focus(), 150);
+    }
+
+    function closeCtxModal() {
+      $('ctx-modal').classList.add('hidden');
+    }
+
+    function addCtxBubble(role, text) {
+      const el = $('ctx-msgs');
+      const div = document.createElement('div');
+      div.className = `ctx-bubble ${role}`;
+      div.textContent = text;
+      el.appendChild(div);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    async function ctxSend() {
+      const input = $('ctx-input');
+      const text = input.value.trim();
+      if (!text) return;
+      ctxMessages.push({ role: 'user', content: text });
+      addCtxBubble('user', text);
+      input.value = '';
+      await runCtxCall();
+    }
+
+    async function runCtxCall() {
+      const sendBtn = $('ctx-send-btn');
+      const input = $('ctx-input');
+      sendBtn.disabled = true;
+      input.disabled = true;
+
+      try {
+        const res = await apiFetch('/api/admin/context-chat', {
+          method: 'POST',
+          body: JSON.stringify({ messages: ctxMessages }),
+        });
+
+        if (!res?.ok) return;
+        const data = await res.json();
+        const reply = data.content?.[0]?.text ?? '';
+        ctxMessages.push({ role: 'assistant', content: reply });
+
+        const match = reply.match(/===KONTEXT_START===([\s\S]*?)===KONTEXT_END===/);
+        if (match) {
+          extractedCtx = match[1].trim();
+          const before = reply.split('===KONTEXT_START===')[0].trim();
+          if (before) addCtxBubble('ai', before);
+          $('ctx-preview').textContent = extractedCtx;
+          $('ctx-preview').style.display = 'block';
+          $('ctx-apply-row').style.display = 'block';
+        } else {
+          addCtxBubble('ai', reply);
+        }
+      } finally {
+        sendBtn.disabled = false;
+        input.disabled = false;
+        input.focus();
+      }
+    }
+
+    function applyCtxText() {
+      const textarea = $('edit-context');
+      if (textarea && extractedCtx) textarea.value = extractedCtx;
+      closeCtxModal();
+    }
+
     // ===== EVENTS =====
 
     $('pw-btn').onclick = login;
@@ -835,8 +1201,12 @@
     $('new-name').onkeydown = e => { if (e.key === 'Enter') createUser(); };
     $('modal').onclick = e => { if (e.target === $('modal')) hideModal(); };
 
+    $('ctx-modal').onclick = e => { if (e.target === $('ctx-modal')) closeCtxModal(); };
+    $('ctx-input').onkeydown = e => { if (e.key === 'Enter') ctxSend(); };
+
     $('back-btn').onclick = async () => { await loadUsers(); show('s-list'); };
     $('save-btn').onclick = saveCurrentUser;
+    $('dup-btn').onclick = duplicateUser;
 
     // ===== INIT =====
 
