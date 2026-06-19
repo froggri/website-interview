@@ -2,6 +2,24 @@
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/i/:code", "destination": "/?token=:code" },
+
+    { "source": "/api/session/complete", "destination": "/api/session?sub=complete" },
+
+    { "source": "/api/contacts/:id", "destination": "/api/contacts?id=:id" },
+
+    { "source": "/api/deals/:dealId/sessions", "destination": "/api/deals?dealId=:dealId&sub=sessions" },
+    { "source": "/api/deals/:dealId/tasks",    "destination": "/api/deals?dealId=:dealId&sub=tasks" },
+    { "source": "/api/deals/:dealId",           "destination": "/api/deals?dealId=:dealId" },
+
+    { "source": "/api/tasks/:taskId/subtasks", "destination": "/api/tasks?taskId=:taskId&sub=subtasks" },
+    { "source": "/api/tasks/:taskId/reorder",  "destination": "/api/tasks?taskId=:taskId&sub=reorder" },
+    { "source": "/api/tasks/:taskId",          "destination": "/api/tasks?taskId=:taskId" },
+
+    { "source": "/api/invoices/next-number",   "destination": "/api/invoices?sub=next-number" },
+    { "source": "/api/invoices/:invoiceId",    "destination": "/api/invoices?invoiceId=:invoiceId" },
+
+    { "source": "/api/inquiries/:inquiryId",   "destination": "/api/inquiries?inquiryId=:inquiryId" },
+
     { "source": "/api/(.*)", "destination": "/api/$1" }
   ]
 }

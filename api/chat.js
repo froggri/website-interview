@@ -1,4 +1,21 @@
-const { getUser, getSession, saveSession, saveUser } = require('../lib/kv');
+const {
+  getUser, getSession, saveSession, saveUser,
+  getTokenLookup, getSessionById, getContact, updateSessionById,
+} = require('../lib/kv');
+
+async function resolveToken(token) {
+  const lookup = await getTokenLookup(token);
+  if (lookup) {
+    const [session, contact] = await Promise.all([
+      getSessionById(lookup.sessionId),
+      getContact(lookup.contactId),
+    ]);
+    if (session && contact) return { type: 'new', session, contact };
+  }
+  const [user, session] = await Promise.all([getUser(token), getSession(token)]);
+  if (user) return { type: 'legacy', user, session };
+  return null;
+}
 
 const DESIGN_PROMPT = `Du bist ein erfahrener UI/UX Designer und Creative Director, der im Auftrag von Philipp ein Design-Briefing Interview führt. Philipp baut eine Website für diese Person.
 
@@ -100,12 +117,23 @@ module.exports = async function handler(req, res) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
 
-  let user = null, existingSession = null;
+  let resolved = null;
+  let systemUser = null;
   if (token) {
-    [user, existingSession] = await Promise.all([getUser(token), getSession(token)]);
+    resolved = await resolveToken(token);
+    if (resolved?.type === 'new') {
+      systemUser = {
+        name:          resolved.contact.name,
+        context:       resolved.contact.context,
+        questions:     resolved.session.questions || [],
+        designSession: resolved.session.type === 'design',
+      };
+    } else if (resolved?.type === 'legacy') {
+      systemUser = resolved.user;
+    }
   }
 
-  const isDesign = user?.designSession;
+  const isDesign = systemUser?.designSession;
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -117,7 +145,7 @@ module.exports = async function handler(req, res) {
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: isDesign ? 4096 : 1024,
-      system: buildSystemPrompt(user),
+      system: buildSystemPrompt(systemUser),
       messages,
     }),
   });
@@ -129,22 +157,36 @@ module.exports = async function handler(req, res) {
   const data = await response.json();
   const reply = data.content?.[0]?.text ?? '';
 
-  if (token && user) {
-    const mockupMatch = reply.match(/===MOCKUP_START===([\s\S]*?)===MOCKUP_END===/);
+  if (resolved?.type === 'new') {
+    const { session } = resolved;
+    const mockupMatch   = reply.match(/===MOCKUP_START===([\s\S]*?)===MOCKUP_END===/);
     const briefingMatch = reply.match(/===BRIEFING_START===([\s\S]*?)===BRIEFING_END===/);
-
     const replyForStorage = mockupMatch
       ? reply.replace(/===MOCKUP_START===([\s\S]*?)===MOCKUP_END===/, '[HTML-Mockup generiert]')
       : reply;
-
     const allMsgs = [...messages, { role: 'assistant', content: replyForStorage }];
-
+    let briefingText = session.briefingText;
+    if (briefingMatch) briefingText = briefingMatch[0];
+    if (mockupMatch)   briefingText = '===MOCKUP===' + mockupMatch[1].trim();
+    const status = briefingText ? 'abgeschlossen' : 'in-bearbeitung';
+    await updateSessionById(session.id, {
+      messages:    stripImages(allMsgs),
+      briefingText,
+      status,
+      completedAt: status === 'abgeschlossen' ? new Date().toISOString() : session.completedAt,
+    });
+  } else if (resolved?.type === 'legacy') {
+    const { user, session: existingSession } = resolved;
+    const mockupMatch   = reply.match(/===MOCKUP_START===([\s\S]*?)===MOCKUP_END===/);
+    const briefingMatch = reply.match(/===BRIEFING_START===([\s\S]*?)===BRIEFING_END===/);
+    const replyForStorage = mockupMatch
+      ? reply.replace(/===MOCKUP_START===([\s\S]*?)===MOCKUP_END===/, '[HTML-Mockup generiert]')
+      : reply;
+    const allMsgs = [...messages, { role: 'assistant', content: replyForStorage }];
     let briefing = existingSession?.briefing ?? null;
     if (briefingMatch) briefing = briefingMatch[0];
-    if (mockupMatch) briefing = '===MOCKUP===' + mockupMatch[1].trim();
-
+    if (mockupMatch)   briefing = '===MOCKUP===' + mockupMatch[1].trim();
     const sessionStatus = briefing ? 'completed' : 'in_progress';
-
     await Promise.all([
       saveSession(token, {
         messages: stripImages(allMsgs),
