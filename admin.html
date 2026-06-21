@@ -197,6 +197,52 @@
     .ctx-send-btn:hover { opacity: .85; }
     .ctx-send-btn:disabled { opacity: .4; cursor: not-allowed; }
 
+    /* ── Contact Detail ── */
+    .contact-detail-layout { display: flex; flex: 1; overflow: hidden; }
+    .ct-sidebar { width: 272px; flex-shrink: 0; overflow-y: auto; border-right: 1px solid var(--border); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .ct-sidebar::-webkit-scrollbar { width: 3px; }
+    .ct-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .ct-main { flex: 1; overflow-y: auto; padding: 22px 24px; }
+    .ct-main::-webkit-scrollbar { width: 4px; }
+    .ct-main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .ct-avatar-row { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .ct-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent-glow); border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-size: .9rem; font-weight: 700; color: var(--accent); flex-shrink: 0; letter-spacing: -.02em; }
+    .ct-avatar-name { font-weight: 700; font-size: .94rem; }
+    .ct-avatar-meta { font-size: .72rem; color: var(--text-muted); margin-top: 2px; }
+
+    .ct-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+    .ct-section-title { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .ct-field { margin-bottom: 10px; }
+    .ct-field:last-child { margin-bottom: 0; }
+    .ct-field-label { font-size: .65rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 4px; }
+    .ct-field-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 7px; color: var(--text); font-size: .84rem; padding: 7px 10px; outline: none; font-family: inherit; transition: border-color .15s; }
+    .ct-field-input:focus { border-color: var(--accent); }
+    .ct-field-input::placeholder { color: #3a3a4a; }
+
+    .ct-deal-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: background .12s; margin-bottom: 4px; }
+    .ct-deal-row:last-child { margin-bottom: 0; }
+    .ct-deal-row:hover { background: var(--surface-2); }
+    .ct-deal-title { font-size: .84rem; font-weight: 500; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .ct-tl-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .ct-tl-title { font-weight: 700; font-size: .92rem; }
+    .ct-tl-empty { color: var(--text-muted); font-size: .85rem; text-align: center; padding: 40px 0; }
+
+    .ct-tl-item { display: flex; gap: 12px; padding-bottom: 22px; position: relative; }
+    .ct-tl-item::before { content: ''; position: absolute; left: 13px; top: 28px; bottom: 0; width: 1px; background: var(--border); }
+    .ct-tl-item:last-child::before { display: none; }
+    .ct-tl-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: .75rem; flex-shrink: 0; position: relative; z-index: 1; }
+    .ct-tl-body { flex: 1; min-width: 0; }
+    .ct-tl-type-date { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .ct-tl-type { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); }
+    .ct-tl-date { font-size: .68rem; color: var(--text-muted); }
+    .ct-tl-text { font-size: .84rem; line-height: 1.55; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+    .ct-tl-deal-link { font-size: .72rem; color: var(--accent); margin-top: 4px; cursor: pointer; }
+    .ct-tl-deal-link:hover { text-decoration: underline; }
+    .ct-tl-briefing { background: rgba(16,185,129,.06); border: 1px solid rgba(16,185,129,.2); border-radius: 8px; padding: 10px 12px; margin-top: 8px; font-size: .78rem; color: #86efac; line-height: 1.55; max-height: 120px; overflow: hidden; cursor: pointer; }
+    .ct-tl-briefing.expanded { max-height: none; }
+
     /* ── Inquiries ── */
     .inq-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
     .inq-card.inq-new { border-color: rgba(124,110,247,.4); }
@@ -242,6 +288,75 @@
     <div id="view-pipeline" style="display:flex"></div>
     <div id="view-contacts" style="display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:8px;"></div>
     <div id="view-inquiries" style="display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
+
+<!-- ═══ CONTACT DETAIL ═══ -->
+<div id="s-contact" class="screen">
+  <div class="topbar">
+    <button class="btn-ghost" onclick="backToMain()">← CRM</button>
+    <span id="ct-header-name" class="topbar-title"></span>
+    <div style="flex:1"></div>
+    <button class="btn-sm" onclick="openContactNoteModal()">+ Notiz</button>
+  </div>
+  <div class="contact-detail-layout">
+
+    <!-- SIDEBAR -->
+    <div class="ct-sidebar">
+      <div class="ct-avatar-row">
+        <div class="ct-avatar" id="ct-avatar"></div>
+        <div>
+          <div class="ct-avatar-name" id="ct-avatar-name"></div>
+          <div class="ct-avatar-meta" id="ct-avatar-meta"></div>
+        </div>
+      </div>
+
+      <div class="ct-section">
+        <div class="ct-section-title">Kontaktdaten</div>
+        <div class="ct-field">
+          <div class="ct-field-label">Name</div>
+          <input id="ct-f-name" class="ct-field-input" type="text" onblur="saveContactField('name', this.value)" />
+        </div>
+        <div class="ct-field">
+          <div class="ct-field-label">E-Mail</div>
+          <input id="ct-f-email" class="ct-field-input" type="email" onblur="saveContactField('email', this.value)" />
+        </div>
+        <div class="ct-field">
+          <div class="ct-field-label">Telefon</div>
+          <input id="ct-f-phone" class="ct-field-input" type="tel" placeholder="—" onblur="saveContactField('phone', this.value)" />
+        </div>
+        <div class="ct-field">
+          <div class="ct-field-label">Unternehmen</div>
+          <input id="ct-f-company" class="ct-field-input" type="text" placeholder="—" onblur="saveContactField('company', this.value)" />
+        </div>
+        <div class="ct-field">
+          <div class="ct-field-label">Quelle</div>
+          <input id="ct-f-source" class="ct-field-input" type="text" placeholder="—" onblur="saveContactField('source', this.value)" />
+        </div>
+      </div>
+
+      <div class="ct-section">
+        <div class="ct-section-title">Interne Notizen</div>
+        <textarea id="ct-f-notes" class="ct-field-input" rows="4" style="resize:vertical" placeholder="Gedanken zur Person…" onblur="saveContactField('notes', this.value)"></textarea>
+      </div>
+
+      <div class="ct-section">
+        <div class="ct-section-title">
+          Deals
+          <button class="btn-sm" style="font-size:.68rem;padding:3px 9px" onclick="createDealForCurrentContact()">+ Deal</button>
+        </div>
+        <div id="ct-deals-list"></div>
+        <div id="ct-deals-empty" style="display:none;font-size:.8rem;color:var(--text-muted)">Noch keine Deals.</div>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="ct-main">
+      <div class="ct-tl-header">
+        <div class="ct-tl-title">Aktivitäten & Gesprächsverlauf</div>
+      </div>
+      <div id="ct-timeline"></div>
+    </div>
   </div>
 </div>
 
@@ -541,7 +656,7 @@
   }
 
   // ════════════════════════════════════════
-  //  CONTACTS
+  //  CONTACTS LIST
   // ════════════════════════════════════════
   function renderContacts() {
     const list = $('view-contacts');
@@ -553,18 +668,184 @@
       row.className = 'contact-row';
       row.innerHTML = `
         <div class="contact-row-info">
-          <div class="contact-row-name">${c.name}</div>
-          <div class="contact-row-meta">${c.email || ''}${c.company ? ' · ' + c.company : ''} · ${contactDeals.length} Deal${contactDeals.length !== 1 ? 's' : ''}</div>
+          <div class="contact-row-name">${escHtml(c.name)}</div>
+          <div class="contact-row-meta">${escHtml(c.email || '')}${c.company ? ' · ' + escHtml(c.company) : ''} · ${contactDeals.length} Deal${contactDeals.length !== 1 ? 's' : ''}</div>
         </div>
-        <span class="badge badge-none">${c.status || 'lead'}</span>
+        <span class="badge badge-none">${escHtml(c.status || 'lead')}</span>
       `;
-      row.onclick = () => {
-        if (contactDeals.length === 1) { openDeal(contactDeals[0]); }
-        else if (contactDeals.length > 1) { openDeal(contactDeals[0]); } // open latest
-        else { alert('Kein Deal für diesen Kontakt. Erstelle zuerst einen Deal.'); }
-      };
+      row.onclick = () => openContact(c);
       list.appendChild(row);
     });
+  }
+
+  // ════════════════════════════════════════
+  //  CONTACT DETAIL
+  // ════════════════════════════════════════
+  let currentContactActivities = [];
+  let noteContext = 'deal'; // 'deal' | 'contact'
+
+  function initials(name) {
+    return (name || '?').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  }
+
+  function openContact(contact) {
+    currentContact = contact;
+    show('s-contact');
+    $('ct-header-name').textContent = contact.name;
+    $('ct-avatar').textContent = initials(contact.name);
+    $('ct-avatar-name').textContent = contact.name;
+    $('ct-avatar-meta').textContent = [contact.company, contact.email].filter(Boolean).join(' · ') || '—';
+    $('ct-f-name').value    = contact.name || '';
+    $('ct-f-email').value   = contact.email || '';
+    $('ct-f-phone').value   = contact.phone || '';
+    $('ct-f-company').value = contact.company || '';
+    $('ct-f-source').value  = contact.source || '';
+    $('ct-f-notes').value   = contact.notes || '';
+    renderContactDeals();
+    loadContactTimeline();
+  }
+
+  function renderContactDeals() {
+    const contactDeals = deals.filter(d => d.contactId === currentContact.id);
+    const list = $('ct-deals-list');
+    const empty = $('ct-deals-empty');
+    list.innerHTML = '';
+    if (!contactDeals.length) { empty.style.display = ''; return; }
+    empty.style.display = 'none';
+    contactDeals.forEach(deal => {
+      const row = document.createElement('div');
+      row.className = 'ct-deal-row';
+      const stageBadge = STAGE_BADGE[deal.stage] || 'badge-none';
+      row.innerHTML = `
+        <span class="badge ${stageBadge}" style="font-size:.65rem;flex-shrink:0">${STAGE_LABELS[deal.stage] || deal.stage}</span>
+        <span class="ct-deal-title">${escHtml(deal.title)}</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.4"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      `;
+      row.onclick = () => openDealFromContact(deal);
+      list.appendChild(row);
+    });
+  }
+
+  function openDealFromContact(deal) {
+    currentDeal = deal;
+    show('s-deal');
+    $('deal-title').textContent = `${currentContact?.name || '?'} — ${deal.title}`;
+    $('dl-contact-name').textContent = currentContact?.name || '?';
+    $('dl-contact-email').textContent = currentContact?.email || '';
+    $('dl-stage').value = deal.stage;
+    $('dl-value').value = deal.value || '';
+    $('dl-context').value = currentContact?.context || '';
+    switchTab('sessions');
+    loadDealData();
+  }
+
+  async function loadContactTimeline() {
+    $('ct-timeline').innerHTML = '<div class="ct-tl-empty">Lade…</div>';
+    const data = await apiJson(`/api/activities?contactId=${currentContact.id}`);
+    currentContactActivities = data || [];
+
+    // Also load session briefings from all deals
+    const contactDeals = deals.filter(d => d.contactId === currentContact.id);
+    const sessionItems = [];
+    if (contactDeals.length) {
+      const allSessions = await Promise.all(contactDeals.map(d => apiJson(`/api/deals/${d.id}/sessions`)));
+      allSessions.forEach((sessions, i) => {
+        (sessions || []).forEach(s => {
+          if (s.briefingText || s.transcript?.length) {
+            sessionItems.push({ ...s, _dealTitle: contactDeals[i].title, _dealId: contactDeals[i].id, _type: 'session' });
+          }
+        });
+      });
+    }
+
+    const allItems = [
+      ...currentContactActivities.map(a => ({ ...a, _type: 'activity' })),
+      ...sessionItems,
+    ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    renderContactTimeline(allItems);
+  }
+
+  function renderContactTimeline(items) {
+    const el = $('ct-timeline');
+    if (!items.length) {
+      el.innerHTML = '<div class="ct-tl-empty">Noch keine Aktivitäten.<br>Füge eine Notiz hinzu oder starte ein Interview.</div>';
+      return;
+    }
+    el.innerHTML = '';
+    const ICONS = { note: '📝', call: '📞', email: '✉️', internal: '🔧', 'session-summary': '💬', session: '💬' };
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'ct-tl-item';
+      const icon = ICONS[item._type === 'session' ? 'session' : (item.type || 'note')] || '📋';
+      const typeLabel = item._type === 'session' ? 'Interview-Session' : (item.type || 'note');
+      const dateStr = fmtDateTime(item.createdAt);
+
+      let bodyHtml = '';
+      if (item._type === 'session') {
+        const preview = item.briefingText
+          ? item.briefingText.replace(/===BRIEFING_START===/g, '').replace(/===BRIEFING_END===/g, '').substring(0, 300) + '…'
+          : `${(item.transcript?.length || 0)} Nachrichten`;
+        bodyHtml = `<div class="ct-tl-briefing" onclick="this.classList.toggle('expanded')">${escHtml(preview)}</div>`;
+      } else {
+        bodyHtml = `<div class="ct-tl-text">${escHtml(item.body || item.note || '')}</div>`;
+      }
+
+      const dealRef = item._dealTitle || (item.dealId && deals.find(d => d.id === item.dealId)?.title);
+      const dealId  = item._dealId  || item.dealId;
+
+      div.innerHTML = `
+        <div class="ct-tl-icon">${icon}</div>
+        <div class="ct-tl-body">
+          <div class="ct-tl-type-date">
+            <span class="ct-tl-type">${escHtml(typeLabel)}</span>
+            <span class="ct-tl-date">${dateStr}</span>
+          </div>
+          ${bodyHtml}
+          ${dealRef ? `<div class="ct-tl-deal-link" onclick="openDealById('${dealId}')">→ ${escHtml(dealRef)}</div>` : ''}
+        </div>
+      `;
+      el.appendChild(div);
+    });
+  }
+
+  async function saveContactField(field, value) {
+    const updated = await apiJson(`/api/contacts/${currentContact.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ [field]: value }),
+    });
+    if (updated) {
+      const idx = contacts.findIndex(c => c.id === currentContact.id);
+      if (idx >= 0) contacts[idx] = updated;
+      currentContact = updated;
+      $('ct-avatar').textContent  = initials(updated.name);
+      $('ct-avatar-name').textContent = updated.name;
+      $('ct-avatar-meta').textContent = [updated.company, updated.email].filter(Boolean).join(' · ') || '—';
+      $('ct-header-name').textContent = updated.name;
+    }
+  }
+
+  function openContactNoteModal() {
+    noteContext = 'contact';
+    $('nn-body').value = '';
+    $('modal-note').classList.remove('hidden');
+    setTimeout(() => $('nn-body').focus(), 100);
+  }
+
+  async function createDealForCurrentContact() {
+    const deal = await apiJson('/api/deals', {
+      method: 'POST',
+      body: JSON.stringify({ contactId: currentContact.id, title: 'Neues Projekt', stage: 'anfrage' }),
+    });
+    if (!deal) return;
+    deals.push(deal);
+    renderContactDeals();
+    openDealFromContact(deal);
+  }
+
+  function openDealById(dealId) {
+    const deal = deals.find(d => d.id === dealId);
+    if (deal) openDealFromContact(deal);
   }
 
   // ════════════════════════════════════════
@@ -661,6 +942,7 @@
     $('dl-stage').value = deal.stage;
     $('dl-value').value = deal.value || '';
     $('dl-context').value = currentContact?.context || '';
+    noteContext = 'deal';
     switchTab('sessions');
     loadDealData();
   }
@@ -969,11 +1251,24 @@
   async function createNote() {
     const body = $('nn-body').value.trim();
     if (!body) return;
-    const activity = await apiJson('/api/activities', {
-      method: 'POST',
-      body: JSON.stringify({ contactId: currentDeal.contactId, dealId: currentDeal.id, type: 'note', direction: 'internal', subject: 'Notiz', body }),
-    });
-    if (activity) { currentActivities.unshift(activity); hideModal('modal-note'); $('nn-body').value = ''; renderActivities(); }
+    if (noteContext === 'contact') {
+      const activity = await apiJson('/api/activities', {
+        method: 'POST',
+        body: JSON.stringify({ contactId: currentContact.id, type: 'note', direction: 'internal', subject: 'Notiz', body }),
+      });
+      if (activity) {
+        currentContactActivities.unshift(activity);
+        hideModal('modal-note');
+        $('nn-body').value = '';
+        loadContactTimeline();
+      }
+    } else {
+      const activity = await apiJson('/api/activities', {
+        method: 'POST',
+        body: JSON.stringify({ contactId: currentDeal.contactId, dealId: currentDeal.id, type: 'note', direction: 'internal', subject: 'Notiz', body }),
+      });
+      if (activity) { currentActivities.unshift(activity); hideModal('modal-note'); $('nn-body').value = ''; renderActivities(); }
+    }
   }
 
   // ════════════════════════════════════════
