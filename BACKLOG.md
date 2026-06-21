@@ -5,12 +5,11 @@ Status-Labels: `[ ]` offen · `[~]` in Arbeit · `[x]` done · `[?]` unklar / Ko
 
 ---
 
-## In Progress
+## Done (Phasen)
 
-- [~] **Phase 2 — API-Routen** (Contacts, Deals, Sessions, Activities, Tasks, Invoices, Inquiries)
-- [~] **Phase 3 — Intelligentes Gesprächsverhalten** (context-aware Prompt, Dual-Briefing)
-- [~] **Phase 4 — Admin-View Rebuild** (Kanban, Task-Board, Aktivitäts-Log, Rechnungen)
-- [~] **Phase 5 — Landing Page + Anfrage-Flow** (Resend-Integration)
+- [x] **Phase 2 — API-Routen** (Contacts, Deals, Sessions, Activities, Tasks, Invoices, Inquiries)
+- [x] **Phase 3 — Intelligentes Gesprächsverhalten** (context-aware Prompt, Dual-Briefing via /session/complete)
+- [x] **Phase 4 — Admin-View Rebuild** (Kanban-Pipeline, Deal-Detail mit Tabs, Task/Aktivitäten/Rechnung)
 
 ---
 

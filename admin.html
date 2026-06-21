@@ -197,6 +197,15 @@
     .ctx-send-btn:hover { opacity: .85; }
     .ctx-send-btn:disabled { opacity: .4; cursor: not-allowed; }
 
+    /* ── Inquiries ── */
+    .inq-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .inq-card.inq-new { border-color: rgba(124,110,247,.4); }
+    .inq-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .inq-name { font-weight: 600; font-size: .92rem; }
+    .inq-meta { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
+    .inq-message { font-size: .84rem; color: var(--text-muted); line-height: 1.55; margin: 10px 0 12px; white-space: pre-wrap; word-break: break-word; }
+    .inq-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
     /* ── Empty / scroll ── */
     .empty { text-align: center; color: var(--text-muted); padding: 40px 24px; font-size: .88rem; line-height: 1.6; }
     .scroll-body { overflow-y: auto; }
@@ -224,6 +233,7 @@
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="switchView('pipeline')">Pipeline</button>
       <button class="nav-tab" onclick="switchView('contacts')">Kontakte</button>
+      <button class="nav-tab" onclick="switchView('inquiries')">Anfragen <span id="inq-badge" style="display:none;background:var(--accent);color:#fff;border-radius:10px;padding:1px 6px;font-size:.68rem;margin-left:2px"></span></button>
     </div>
     <div style="flex:1"></div>
     <button id="new-contact-btn" class="btn-sm">+ Kontakt</button>
@@ -231,6 +241,7 @@
   <div class="main-body">
     <div id="view-pipeline" style="display:flex"></div>
     <div id="view-contacts" style="display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:8px;"></div>
+    <div id="view-inquiries" style="display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:8px;"></div>
   </div>
 </div>
 
@@ -390,6 +401,7 @@
   let adminToken = sessionStorage.getItem('adminToken') || '';
   let contacts = [];
   let deals = [];
+  let inquiries = [];
   let currentDeal = null;
   let currentContact = null;
   let currentSessions = [];
@@ -449,12 +461,22 @@
   //  DATA LOADING
   // ════════════════════════════════════════
   async function loadAll() {
-    [contacts, deals] = await Promise.all([
+    [contacts, deals, inquiries] = await Promise.all([
       apiJson('/api/contacts'),
       apiJson('/api/deals'),
+      apiJson('/api/inquiries'),
     ]);
     contacts = contacts || [];
     deals = deals || [];
+    inquiries = inquiries || [];
+    updateInqBadge();
+  }
+
+  function updateInqBadge() {
+    const n = inquiries.filter(i => i.status === 'neu').length;
+    const badge = $('inq-badge');
+    badge.textContent = n;
+    badge.style.display = n > 0 ? 'inline' : 'none';
   }
 
   function contactById(id) { return contacts.find(c => c.id === id); }
@@ -463,11 +485,14 @@
   //  VIEW SWITCHING
   // ════════════════════════════════════════
   function switchView(view) {
-    document.querySelectorAll('.nav-tab').forEach((t, i) => t.classList.toggle('active', ['pipeline','contacts'][i] === view));
+    const views = ['pipeline','contacts','inquiries'];
+    document.querySelectorAll('.nav-tab').forEach((t, i) => t.classList.toggle('active', views[i] === view));
     $('view-pipeline').style.display = view === 'pipeline' ? 'flex' : 'none';
     $('view-contacts').style.display = view === 'contacts' ? 'flex' : 'none';
+    $('view-inquiries').style.display = view === 'inquiries' ? 'flex' : 'none';
     if (view === 'pipeline') renderPipeline();
     if (view === 'contacts') renderContacts();
+    if (view === 'inquiries') renderInquiries();
   }
 
   // ════════════════════════════════════════
@@ -540,6 +565,87 @@
       };
       list.appendChild(row);
     });
+  }
+
+  // ════════════════════════════════════════
+  //  INQUIRIES
+  // ════════════════════════════════════════
+  function renderInquiries() {
+    const container = $('view-inquiries');
+    container.innerHTML = '';
+    if (!inquiries.length) {
+      container.innerHTML = '<div class="empty">Noch keine Anfragen.</div>';
+      return;
+    }
+    inquiries.forEach(inq => {
+      const isNew = inq.status === 'neu';
+      const card = document.createElement('div');
+      card.className = 'inq-card' + (isNew ? ' inq-new' : '');
+      const date = new Date(inq.createdAt).toLocaleDateString('de-DE', { day:'numeric', month:'short', year:'numeric' });
+      card.innerHTML = `
+        <div class="inq-card-top">
+          <div>
+            <div class="inq-name">${escHtml(inq.name)}</div>
+            <div class="inq-meta">${escHtml(inq.email)}${inq.company ? ' · ' + escHtml(inq.company) : ''} · ${date}</div>
+          </div>
+          <span class="badge ${isNew ? 'badge-purple' : 'badge-none'}" style="font-size:.7rem;flex-shrink:0">${isNew ? 'Neu' : escHtml(inq.status)}</span>
+        </div>
+        <div class="inq-message">${escHtml(inq.message)}</div>
+        <div class="inq-actions">
+          ${isNew ? `<button class="btn-sm" style="background:var(--surface-2);color:var(--text);border:1px solid var(--border)" onclick="markInqSeen('${inq.id}')">Als gelesen markieren</button>` : ''}
+          ${inq.status !== 'umgewandelt'
+            ? `<button class="btn-sm" onclick="convertInquiry('${inq.id}')">In Deal umwandeln →</button>`
+            : `<span style="font-size:.78rem;color:var(--text-muted)">✓ Deal erstellt</span>`}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  async function markInqSeen(inquiryId) {
+    await api(`/api/inquiries/${inquiryId}`, { method: 'PATCH', body: JSON.stringify({ status: 'gesehen' }) });
+    const inq = inquiries.find(i => i.id === inquiryId);
+    if (inq) inq.status = 'gesehen';
+    updateInqBadge();
+    renderInquiries();
+  }
+
+  async function convertInquiry(inquiryId) {
+    const inq = inquiries.find(i => i.id === inquiryId);
+    if (!inq) return;
+
+    const contact = await apiJson('/api/contacts', {
+      method: 'POST',
+      body: JSON.stringify({ name: inq.name, email: inq.email, company: inq.company || '', source: 'anfrage' }),
+    });
+    if (!contact) return alert('Fehler beim Erstellen des Kontakts.');
+    contacts.push(contact);
+
+    const deal = await apiJson('/api/deals', {
+      method: 'POST',
+      body: JSON.stringify({ contactId: contact.id, title: 'Website-Projekt', stage: 'anfrage', description: inq.message }),
+    });
+    if (!deal) return alert('Fehler beim Erstellen des Deals.');
+    deals.push(deal);
+
+    const session = await apiJson(`/api/deals/${deal.id}/sessions`, {
+      method: 'POST',
+      body: JSON.stringify({ type: 'requirements' }),
+    });
+
+    await api(`/api/inquiries/${inquiryId}`, { method: 'PATCH', body: JSON.stringify({ status: 'umgewandelt', dealId: deal.id }) });
+    const inqIdx = inquiries.findIndex(i => i.id === inquiryId);
+    if (inqIdx >= 0) inquiries[inqIdx].status = 'umgewandelt';
+
+    if (session?.token) {
+      const link = `${location.origin}/i/${session.token}`;
+      prompt(`Interview-Link für ${inq.name} — kopieren und senden:`, link);
+    } else {
+      alert('Deal erstellt. Gehe zum Deal-Detail, um einen Interview-Link zu generieren.');
+    }
+
+    updateInqBadge();
+    renderInquiries();
   }
 
   // ════════════════════════════════════════

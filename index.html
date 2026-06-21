@@ -143,6 +143,126 @@
     #start-btn:active { transform: scale(0.985); }
     .setup-meta { margin-top: 14px; font-size: 0.75rem; color: #3a3a4a; text-align: center; }
 
+    /* ===== SCREEN: LANDING ===== */
+
+    #screen-landing {
+      justify-content: flex-start;
+      overflow-y: auto;
+      padding: 48px 24px 80px;
+    }
+
+    .landing-inner {
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+      animation: fadeUp 0.35s ease;
+    }
+
+    .landing-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 36px;
+    }
+
+    .landing-h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -.025em;
+      margin-bottom: 14px;
+    }
+
+    .landing-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 40px;
+      max-width: 400px;
+    }
+
+    .landing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .landing-card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .landing-field {
+      display: block;
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-size: 0.9rem;
+      padding: 10px 13px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .15s;
+      margin-bottom: 11px;
+    }
+    .landing-field:focus { border-color: var(--accent); }
+    .landing-field::placeholder { color: #383848; }
+    textarea.landing-field { resize: vertical; min-height: 95px; }
+
+    .landing-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 11px;
+      padding: 13px 16px;
+      font-size: 0.93rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 6px;
+      transition: opacity .15s;
+    }
+    .landing-submit:hover { opacity: 0.88; }
+    .landing-submit:disabled { opacity: 0.5; cursor: default; }
+
+    .landing-err { color: #f87171; font-size: .8rem; margin-top: 8px; display: none; }
+
+    .landing-footer-link {
+      text-align: center;
+      font-size: 0.78rem;
+      color: #3a3a4a;
+    }
+    .landing-footer-link a {
+      color: var(--text-muted);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .landing-success {
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .landing-success-check {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(16,185,129,.12);
+      border: 1px solid rgba(16,185,129,.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 1.6rem;
+      color: var(--green);
+    }
+    .landing-success h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+    .landing-success p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; }
+
     /* ===== SCREEN: CHAT ===== */
 
     #screen-chat > header {
@@ -386,6 +506,37 @@
   </style>
 </head>
 <body>
+
+  <!-- ======= LANDING ======= -->
+  <div id="screen-landing" class="screen">
+    <div id="landing-form-view" class="landing-inner">
+      <div class="landing-logo">
+        <div class="pulse-dot"></div>
+        Philipp Grimmel · Webentwickler
+      </div>
+      <h1 class="landing-h1">Websites, die<br>für dich arbeiten.</h1>
+      <p class="landing-sub">Kein Template, kein Baukastensystem. Individuelle Umsetzung — abgestimmt auf dein Business und deine Ziele.</p>
+      <div class="landing-card">
+        <h2>Projekt anfragen</h2>
+        <input id="lnd-name" class="landing-field" type="text" placeholder="Dein Name *" autocomplete="name" />
+        <input id="lnd-email" class="landing-field" type="email" placeholder="E-Mail-Adresse *" autocomplete="email" />
+        <input id="lnd-company" class="landing-field" type="text" placeholder="Unternehmen / Website (optional)" />
+        <textarea id="lnd-message" class="landing-field" rows="4" placeholder="Was planst du? Worum geht es? *"></textarea>
+        <button id="lnd-submit" class="landing-submit" onclick="submitInquiry()">Anfrage absenden →</button>
+        <p id="lnd-err" class="landing-err"></p>
+      </div>
+      <p class="landing-footer-link">
+        <a onclick="switchToSetup(event)">Ich habe bereits einen Einladungslink →</a>
+      </p>
+    </div>
+    <div id="landing-success-view" class="landing-inner" style="display:none">
+      <div class="landing-success">
+        <div class="landing-success-check">✓</div>
+        <h2>Anfrage angekommen!</h2>
+        <p>Ich melde mich in der Regel<br>innerhalb von 48 Stunden bei dir.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- ======= INVALID TOKEN ======= -->
   <div id="screen-invalid" class="info-screen">
@@ -867,11 +1018,54 @@
 
     // ===== INIT =====
 
+    function switchToSetup(e) {
+      e && e.preventDefault();
+      $('name-input-area').style.display = 'block';
+      switchScreen('setup');
+      setTimeout(() => $('name-input').focus(), 100);
+    }
+
+    async function submitInquiry() {
+      const name    = $('lnd-name').value.trim();
+      const email   = $('lnd-email').value.trim();
+      const company = $('lnd-company').value.trim();
+      const message = $('lnd-message').value.trim();
+      const errEl   = $('lnd-err');
+      errEl.style.display = 'none';
+
+      if (!name || !email || !message) {
+        errEl.textContent = 'Bitte fülle alle Pflichtfelder aus.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const btn = $('lnd-submit');
+      btn.disabled = true;
+      btn.textContent = 'Wird gesendet…';
+
+      try {
+        const res = await fetch('/api/inquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, company, message }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Fehler beim Absenden');
+        }
+        $('landing-form-view').style.display = 'none';
+        $('landing-success-view').style.display = '';
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Anfrage absenden →';
+      }
+    }
+
     async function init() {
       if (!token) {
-        $('name-input-area').style.display = 'block';
-        switchScreen('setup');
-        setTimeout(() => $('name-input').focus(), 100);
+        switchScreen('landing');
         return;
       }
 
