@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website-Briefing · PO-Interview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface-2: #222;
+      --accent: #7c6ef7;
+      --accent-glow: rgba(124, 110, 247, 0.12);
+      --accent-border: rgba(124, 110, 247, 0.28);
+      --text: #e2e2ec;
+      --text-muted: #6b7280;
+      --border: #2a2a2a;
+      --green: #10b981;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .screen { display: none; flex-direction: column; height: 100dvh; }
+    .screen.active { display: flex; }
+
+    /* ===== INFO SCREENS ===== */
+
+    .info-screen {
+      display: none;
+      flex-direction: column;
+      height: 100dvh;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .info-screen.active { display: flex; }
+
+    .info-icon { font-size: 2.4rem; margin-bottom: 18px; opacity: 0.4; }
+    .info-screen h2 { font-size: 1.2rem; font-weight: 600; }
+    .info-screen p { color: var(--text-muted); margin-top: 8px; font-size: 0.88rem; line-height: 1.6; }
+
+    /* ===== SCREEN: SETUP ===== */
+
+    #screen-setup {
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .setup-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 44px 40px;
+      max-width: 460px;
+      width: 100%;
+      animation: fadeUp 0.35s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .setup-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent-border);
+      border-radius: 20px;
+      padding: 4px 12px 4px 8px;
+      font-size: 0.75rem;
+      color: #a78bfa;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    .setup-card h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.35; }
+    .setup-card .sub { color: var(--text-muted); margin-top: 10px; line-height: 1.65; font-size: 0.88rem; }
+    .setup-divider { height: 1px; background: var(--border); margin: 26px 0; }
+
+    .field-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+    }
+
+    .field-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-size: 0.93rem;
+      padding: 10px 13px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .15s;
+      margin-bottom: 16px;
+    }
+
+    .field-input:focus { border-color: var(--accent); }
+    .field-input::placeholder { color: #383848; }
+
+    #start-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 11px;
+      padding: 13px 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    #start-btn:hover { opacity: 0.88; }
+    #start-btn:active { transform: scale(0.985); }
+    .setup-meta { margin-top: 14px; font-size: 0.75rem; color: #3a3a4a; text-align: center; }
+
+
+    /* ===== SCREEN: CHAT ===== */
+
+    #screen-chat > header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 11px 18px;
+      flex-shrink: 0;
+    }
+
+    .hrow { display: flex; align-items: center; gap: 9px; }
+
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green); flex-shrink: 0;
+      animation: pulseDot 2.2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,.5); opacity: 1; }
+      60%       { box-shadow: 0 0 0 5px rgba(16,185,129,0); opacity: .75; }
+    }
+
+    .header-title { font-weight: 600; font-size: 0.9rem; flex: 1; }
+    #header-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+
+    .progress-row { display: flex; align-items: center; gap: 10px; margin-top: 7px; }
+    .progress-track { flex: 1; height: 3px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+
+    #progress-fill {
+      height: 100%; background: var(--accent); border-radius: 2px;
+      width: 0%; transition: width 0.5s ease;
+    }
+
+    #progress-label { font-size: 0.7rem; color: var(--text-muted); min-width: 30px; text-align: right; }
+
+    #messages {
+      flex: 1; overflow-y: auto; padding: 18px;
+      display: flex; flex-direction: column; gap: 10px;
+      scroll-behavior: smooth;
+    }
+
+    #messages::-webkit-scrollbar { width: 4px; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .bubble {
+      max-width: 78%; padding: 11px 15px; border-radius: 18px;
+      line-height: 1.65; font-size: 0.91rem;
+      word-break: break-word; animation: bubbleIn 0.18s ease;
+    }
+
+    .bubble span { white-space: pre-wrap; display: block; }
+
+    @keyframes bubbleIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .bubble.ai {
+      background: var(--surface); border: 1px solid var(--border);
+      align-self: flex-start; border-bottom-left-radius: 4px;
+      white-space: pre-wrap;
+    }
+
+    .bubble.user {
+      background: var(--accent-glow); border: 1px solid var(--accent-border);
+      align-self: flex-end; border-bottom-right-radius: 4px;
+    }
+
+    .bubble.error {
+      background: rgba(239,68,68,.06); border: 1px solid rgba(239,68,68,.25);
+      color: #fca5a5; align-self: flex-start; border-bottom-left-radius: 4px;
+      font-size: 0.84rem; white-space: pre-wrap;
+    }
+
+    .msg-img { max-width: 100%; border-radius: 8px; display: block; margin-bottom: 6px; }
+
+    .typing-wrap { display: flex; gap: 5px; align-items: center; padding: 12px 15px; }
+    .typing-wrap span {
+      width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%;
+      animation: typeBounce 1.2s infinite ease-in-out;
+    }
+    .typing-wrap span:nth-child(2) { animation-delay: .15s; }
+    .typing-wrap span:nth-child(3) { animation-delay: .3s; }
+
+    @keyframes typeBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: .25; }
+      30%            { transform: translateY(-5px); opacity: 1; }
+    }
+
+    #img-preview-bar {
+      border-top: 1px solid var(--border);
+      padding: 8px 16px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    #img-preview-bar.hidden { display: none; }
+    #preview-img { height: 56px; border-radius: 8px; object-fit: cover; }
+
+    #remove-img-btn {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 4px;
+    }
+
+    #remove-img-btn:hover { color: #fca5a5; }
+
+    #input-area {
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+
+    #img-btn {
+      cursor: pointer; color: var(--text-muted);
+      display: flex; align-items: center;
+      padding: 4px; border-radius: 6px;
+      transition: color .15s; margin-bottom: 3px;
+      flex-shrink: 0;
+    }
+
+    #img-btn:hover { color: var(--accent); }
+
+    #chat-input {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 11px; color: var(--text); font-size: 0.91rem;
+      padding: 11px 14px; resize: none; min-height: 44px; max-height: 130px;
+      outline: none; font-family: inherit; line-height: 1.5; transition: border-color .15s;
+    }
+
+    #chat-input:focus { border-color: var(--accent); }
+    #chat-input::placeholder { color: #383848; }
+    #chat-input:disabled { opacity: .45; }
+
+    #send-btn {
+      background: var(--accent); color: #fff; border: none;
+      border-radius: 11px; width: 44px; height: 44px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: opacity .15s;
+    }
+
+    #send-btn:hover:not(:disabled) { opacity: .85; }
+    #send-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ===== SCREEN: BRIEFING ===== */
+
+    #screen-briefing > header {
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .check-badge {
+      width: 30px; height: 30px;
+      background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.3);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    #briefing-content { flex: 1; overflow-y: auto; padding: 24px 18px; }
+    #briefing-content::-webkit-scrollbar { width: 4px; }
+    #briefing-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .briefing-inner { max-width: 640px; margin: 0 auto; }
+    .briefing-hero { margin-bottom: 22px; }
+    .briefing-hero h2 { font-size: 1.3rem; font-weight: 700; }
+    .briefing-hero p { color: var(--text-muted); margin-top: 4px; font-size: 0.82rem; }
+    .briefing-grid { display: grid; gap: 9px; }
+
+    .brief-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 11px; padding: 13px 15px;
+    }
+
+    .card-label {
+      font-size: 0.66rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 5px;
+    }
+
+    .card-value { font-size: 0.88rem; line-height: 1.65; color: var(--text); white-space: pre-wrap; }
+
+    .briefing-actions { display: flex; gap: 9px; margin-top: 18px; flex-wrap: wrap; }
+
+    .btn-copy {
+      background: var(--accent); color: #fff; border: none;
+      border-radius: 9px; padding: 9px 16px; font-size: 0.86rem;
+      font-weight: 600; cursor: pointer; font-family: inherit;
+      transition: opacity .15s;
+    }
+
+    .btn-copy:hover { opacity: .85; }
+
+    .btn-raw {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--border); border-radius: 9px;
+      padding: 9px 16px; font-size: 0.86rem; cursor: pointer;
+      font-family: inherit; transition: border-color .15s, color .15s;
+    }
+
+    .btn-raw:hover { border-color: var(--accent); color: var(--text); }
+
+    .raw-block {
+      display: none;
+      background: #080f08; border: 1px solid #1a321a;
+      border-radius: 11px; padding: 14px; margin-top: 12px;
+      font-family: 'Courier New', monospace; font-size: 0.76rem;
+      color: #86efac; white-space: pre-wrap; line-height: 1.6; overflow-x: auto;
+    }
+
+    .raw-block.show { display: block; }
+
+    .intake-done {
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    .intake-done .done-icon {
+      width: 56px; height: 56px;
+      background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.25);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .intake-done h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; }
+    .intake-done p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; max-width: 340px; margin: 0 auto; }
+
+    .mockup-frame {
+      width: 100%; height: 460px;
+      border: 1px solid var(--border); border-radius: 12px;
+      margin: 16px 0;
+    }
+
+    .bottom-space { height: 36px; }
+  </style>
+</head>
+<body>
+
+
+  <!-- ======= INVALID TOKEN ======= -->
+  <div id="screen-invalid" class="info-screen">
+    <div class="info-icon">⚠</div>
+    <h2>Link nicht gefunden</h2>
+    <p>Dieser Link ist abgelaufen oder ungültig.<br>Bitte wende dich an Philipp.</p>
+  </div>
+
+  <!-- ======= SETUP ======= -->
+  <div id="screen-setup" class="screen">
+    <div class="setup-card">
+      <div class="setup-badge">
+        <div class="badge-dot"></div>
+        Philipps PO-Assistent
+      </div>
+      <h1 id="welcome-h1">Hey!</h1>
+      <p class="sub" id="welcome-sub">
+        Philipp möchte eine professionelle Website für dich bauen.
+        Damit das Ergebnis wirklich passt, führe ich zuerst ein kurzes Interview mit dir durch —
+        dauert etwa 15 Minuten.
+      </p>
+      <div class="setup-divider"></div>
+      <div id="name-input-area" style="display:none">
+        <div class="field-label">Dein Vorname</div>
+        <input id="name-input" class="field-input" type="text" placeholder="z. B. Micha" autocomplete="off" />
+      </div>
+      <button id="start-btn">
+        Interview starten
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+          <path d="M2.5 7.5h10M8.5 3.5l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <p class="setup-meta">Kein Account nötig · Deine Antworten gehen direkt zu Philipp</p>
+    </div>
+  </div>
+
+  <!-- ======= CHAT ======= -->
+  <div id="screen-chat" class="screen">
+    <header>
+      <div class="hrow">
+        <div class="pulse-dot"></div>
+        <span class="header-title">Website-Briefing · PO-Interview</span>
+      </div>
+      <div id="header-sub">Verbinde…</div>
+      <div class="progress-row">
+        <div class="progress-track"><div id="progress-fill"></div></div>
+        <span id="progress-label">0/10</span>
+      </div>
+    </header>
+
+    <div id="messages"></div>
+
+    <div id="img-preview-bar" class="hidden">
+      <img id="preview-img" src="" alt="Vorschau" />
+      <span style="font-size:0.8rem;color:var(--text-muted);flex:1">Bild angehängt</span>
+      <button id="remove-img-btn" title="Entfernen">×</button>
+    </div>
+
+    <div id="input-area">
+      <label id="img-btn" for="file-input" title="Bild hochladen">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="7" cy="8.5" r="1.5" fill="currentColor"/>
+          <path d="M2 13l4-4 3 3 3-3 6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </label>
+      <input id="file-input" type="file" accept="image/*" hidden />
+      <textarea
+        id="chat-input"
+        placeholder="Deine Antwort … (Enter senden · Shift+Enter Zeilenumbruch)"
+        rows="1"
+      ></textarea>
+      <button id="send-btn" aria-label="Senden">
+        <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+          <path d="M8.5 13.5v-10M3.5 8.5l5-5 5 5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ======= BRIEFING ======= -->
+  <div id="screen-briefing" class="screen">
+    <header>
+      <div class="check-badge">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M1.5 6.5l3.5 3.5 6.5-7" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <div style="font-weight:600;font-size:0.9rem;" id="briefing-header-title">Interview abgeschlossen</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;" id="briefing-header-sub">Briefing bereit für Philipp</div>
+      </div>
+    </header>
+    <div id="briefing-content"></div>
+  </div>
+
+  <script>
+    const LABELS = {
+      NAME: 'Name', BERUF: 'Beruf & Business', ZIELGRUPPE: 'Zielgruppe',
+      KERNBOTSCHAFT: 'Kernbotschaft', USP: 'Alleinstellungsmerkmale',
+      STRUKTUR: 'Website-Struktur', STIL: 'Stil & Tonalität',
+      ZIEL: 'Primäres Ziel', TECHNIK: 'Technische Wünsche',
+      AUSSCHLUESSE: 'Ausschlüsse', BESONDERHEITEN: 'Besonderheiten',
+    };
+
+    const urlToken = new URLSearchParams(window.location.search).get('token');
+    let token = urlToken || localStorage.getItem('interviewToken') || '';
+    let isIntakeSession = !urlToken; // came without invitation link
+    let isInvitedUser = true;
+    let userName = '';
+    let messages = [];
+    let userMsgCount = 0;
+    let pendingImage = null;
+
+    const $ = id => document.getElementById(id);
+
+    function switchScreen(name) {
+      document.querySelectorAll('.screen, .info-screen').forEach(s => s.classList.remove('active'));
+      $('screen-' + name).classList.add('active');
+    }
+
+    function updateProgress() {
+      const pct = Math.min((userMsgCount / 10) * 100, 100);
+      $('progress-fill').style.width = pct + '%';
+      $('progress-label').textContent = `${userMsgCount}/10`;
+    }
+
+    function addBubble(type, content) {
+      const el = $('messages');
+      const div = document.createElement('div');
+      div.className = 'bubble ' + type;
+
+      if (Array.isArray(content)) {
+        content.forEach(block => {
+          if (block.type === 'image') {
+            const img = document.createElement('img');
+            img.src = `data:${block.source.media_type};base64,${block.source.data}`;
+            img.className = 'msg-img';
+            div.appendChild(img);
+          } else if (block.type === 'text' && block.text) {
+            const span = document.createElement('span');
+            span.textContent = block.text;
+            div.appendChild(span);
+          }
+        });
+      } else {
+        div.textContent = content;
+      }
+
+      el.appendChild(div);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function showTyping() {
+      const el = $('messages');
+      const div = document.createElement('div');
+      div.id = 'typing-bubble';
+      div.className = 'bubble ai typing-wrap';
+      div.innerHTML = '<span></span><span></span><span></span>';
+      el.appendChild(div);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function removeTyping() { $('typing-bubble')?.remove(); }
+
+    function setLocked(locked) {
+      $('send-btn').disabled = locked;
+      $('chat-input').disabled = locked;
+    }
+
+    function buildUserMessage(text) {
+      if (pendingImage) {
+        const content = [
+          { type: 'image', source: { type: 'base64', media_type: pendingImage.mediaType, data: pendingImage.base64 } },
+        ];
+        if (text) content.push({ type: 'text', text });
+        pendingImage = null;
+        $('img-preview-bar').classList.add('hidden');
+        $('preview-img').src = '';
+        return { role: 'user', content };
+      }
+      return { role: 'user', content: text };
+    }
+
+    async function callAPI() {
+      setLocked(true);
+      showTyping();
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages, token }),
+        });
+
+        removeTyping();
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          addBubble('error', 'Fehler: ' + (err.error || res.statusText));
+          return;
+        }
+
+        const data = await res.json();
+        const reply = data.content?.[0]?.text ?? '';
+        messages.push({ role: 'assistant', content: reply });
+
+        if (reply.includes('===MOCKUP_START===')) {
+          const before = reply.split('===MOCKUP_START===')[0].trim();
+          if (before) addBubble('ai', before);
+          const m = reply.match(/===MOCKUP_START===([\s\S]*?)===MOCKUP_END===/);
+          if (m) setTimeout(() => renderMockup(m[1].trim()), 700);
+        } else if (reply.includes('===BRIEFING_START===')) {
+          const before = reply.split('===BRIEFING_START===')[0].trim();
+          if (before) addBubble('ai', before);
+          setTimeout(() => renderBriefing(reply), 700);
+        } else {
+          addBubble('ai', reply);
+        }
+      } catch (err) {
+        removeTyping();
+        addBubble('error', 'Verbindungsfehler: ' + err.message);
+      } finally {
+        setLocked(false);
+        if ($('screen-chat').classList.contains('active')) $('chat-input').focus();
+      }
+    }
+
+    function loadMessagesIntoUI(msgs, name) {
+      const el = $('messages');
+      el.innerHTML = '';
+      msgs.forEach(msg => {
+        if (msg.role === 'user' && msg.content === `Mein Name ist ${name}.`) return;
+        addBubble(msg.role === 'assistant' ? 'ai' : 'user', msg.content);
+      });
+    }
+
+    async function startInterview() {
+      if (!token) {
+        const name = $('name-input').value.trim();
+        if (!name) { $('name-input').focus(); return; }
+        userName = name;
+
+        $('start-btn').disabled = true;
+        $('start-btn').textContent = 'Einen Moment…';
+
+        try {
+          const res = await fetch('/api/intake', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name }),
+          });
+          if (!res.ok) throw new Error('Fehler beim Starten');
+          const data = await res.json();
+          token = data.token;
+          localStorage.setItem('interviewToken', token);
+        } catch (err) {
+          $('start-btn').disabled = false;
+          $('start-btn').textContent = 'Interview starten →';
+          addBubble?.('error', err.message);
+          return;
+        }
+      }
+
+      messages = [{ role: 'user', content: `Mein Name ist ${userName}.` }];
+      userMsgCount = 0;
+      updateProgress();
+      switchScreen('chat');
+      await callAPI();
+    }
+
+    async function sendMessage() {
+      const input = $('chat-input');
+      const text = input.value.trim();
+      if (!text && !pendingImage) return;
+      if ($('send-btn').disabled) return;
+
+      input.value = '';
+      input.style.height = 'auto';
+
+      const msg = buildUserMessage(text);
+      userMsgCount++;
+      updateProgress();
+      messages.push(msg);
+      addBubble('user', msg.content);
+      await callAPI();
+    }
+
+    function parseBriefing(text) {
+      const match = text.match(/===BRIEFING_START===([\s\S]*?)===BRIEFING_END===/);
+      if (!match) return null;
+
+      const raw = match[0];
+      const lines = match[1].trim().split('\n');
+      const fields = {};
+      let key = null, vals = [];
+
+      for (const line of lines) {
+        const m = line.match(/^([A-ZÄÖÜ_]+):\s*(.*)/);
+        if (m) {
+          if (key) fields[key] = vals.join('\n').trim();
+          key = m[1]; vals = m[2] ? [m[2]] : [];
+        } else if (key && line.trim()) {
+          vals.push(line.trim());
+        }
+      }
+      if (key) fields[key] = vals.join('\n').trim();
+      return { fields, raw };
+    }
+
+    function renderBriefing(text) {
+      const parsed = parseBriefing(text);
+      if (!parsed) return;
+      const { fields, raw } = parsed;
+
+      const container = $('briefing-content');
+      container.innerHTML = '';
+
+      const inner = document.createElement('div');
+      inner.className = 'briefing-inner';
+
+      if (!isInvitedUser) {
+        const done = document.createElement('div');
+        done.className = 'intake-done';
+        done.innerHTML = `
+          <div class="done-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M3 11l5.5 5.5L19 5" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2>Briefing abgeschlossen!</h2>
+          <p>Dein Briefing ist bei Philipp angekommen.<br>Er meldet sich bald bei dir.</p>
+        `;
+        inner.appendChild(done);
+        container.appendChild(inner);
+        $('briefing-header-title').textContent = 'Fertig!';
+        $('briefing-header-sub').textContent = 'Briefing ist bei Philipp angekommen';
+        switchScreen('briefing');
+        return;
+      }
+
+      const hero = document.createElement('div');
+      hero.className = 'briefing-hero';
+      hero.innerHTML = `
+        <h2>Briefing für ${fields.NAME || userName}</h2>
+        <p>Erstellt am ${new Date().toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+      `;
+      inner.appendChild(hero);
+
+      const grid = document.createElement('div');
+      grid.className = 'briefing-grid';
+
+      for (const [key, label] of Object.entries(LABELS)) {
+        if (!fields[key]) continue;
+        const card = document.createElement('div');
+        card.className = 'brief-card';
+        card.innerHTML = `<div class="card-label">${label}</div><div class="card-value">${fields[key]}</div>`;
+        grid.appendChild(card);
+      }
+
+      inner.appendChild(grid);
+
+      const rawEl = document.createElement('pre');
+      rawEl.className = 'raw-block';
+      rawEl.textContent = raw;
+
+      const actions = document.createElement('div');
+      actions.className = 'briefing-actions';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'btn-copy';
+      copyBtn.textContent = 'Briefing kopieren (für Philipp)';
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(raw).then(() => {
+          copyBtn.textContent = '✓ Kopiert!';
+          setTimeout(() => { copyBtn.textContent = 'Briefing kopieren (für Philipp)'; }, 2200);
+        });
+      };
+
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'btn-raw';
+      toggleBtn.textContent = 'Rohtext anzeigen';
+      toggleBtn.onclick = () => {
+        const show = rawEl.classList.toggle('show');
+        toggleBtn.textContent = show ? 'Rohtext verbergen' : 'Rohtext anzeigen';
+      };
+
+      actions.appendChild(copyBtn);
+      actions.appendChild(toggleBtn);
+      inner.appendChild(actions);
+      inner.appendChild(rawEl);
+      inner.appendChild(Object.assign(document.createElement('div'), { className: 'bottom-space' }));
+      container.appendChild(inner);
+      switchScreen('briefing');
+    }
+
+    function renderMockup(html) {
+      const container = $('briefing-content');
+      container.innerHTML = '';
+
+      const inner = document.createElement('div');
+      inner.className = 'briefing-inner';
+
+      const hero = document.createElement('div');
+      hero.className = 'briefing-hero';
+      hero.innerHTML = `
+        <h2>Design-Mockup für ${userName}</h2>
+        <p>Erstellt am ${new Date().toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+      `;
+      inner.appendChild(hero);
+
+      const frame = document.createElement('iframe');
+      frame.srcdoc = html;
+      frame.className = 'mockup-frame';
+      inner.appendChild(frame);
+
+      const actions = document.createElement('div');
+      actions.className = 'briefing-actions';
+
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn-copy';
+      downloadBtn.textContent = 'Mockup herunterladen (.html)';
+      downloadBtn.onclick = () => {
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `design-mockup-${userName.toLowerCase()}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      actions.appendChild(downloadBtn);
+      inner.appendChild(actions);
+      inner.appendChild(Object.assign(document.createElement('div'), { className: 'bottom-space' }));
+      container.appendChild(inner);
+
+      $('briefing-header-title').textContent = 'Design-Mockup fertig';
+      $('briefing-header-sub').textContent = 'Für Philipp & zum Download';
+      switchScreen('briefing');
+    }
+
+    // ===== IMAGE UPLOAD =====
+
+    $('file-input').addEventListener('change', () => {
+      const file = $('file-input').files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        pendingImage = { base64: reader.result.split(',')[1], mediaType: file.type };
+        $('preview-img').src = reader.result;
+        $('img-preview-bar').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+      $('file-input').value = '';
+    });
+
+    $('remove-img-btn').addEventListener('click', () => {
+      pendingImage = null;
+      $('img-preview-bar').classList.add('hidden');
+      $('preview-img').src = '';
+    });
+
+    // ===== EVENTS =====
+
+    $('start-btn').addEventListener('click', startInterview);
+    $('send-btn').addEventListener('click', sendMessage);
+    $('chat-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    $('chat-input').addEventListener('input', () => {
+      const el = $('chat-input');
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 130) + 'px';
+    });
+    $('name-input')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') startInterview();
+    });
+
+    // ===== INIT =====
+
+
+    async function init() {
+      if (!token) {
+        switchScreen('invalid');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/session?token=${token}`);
+        if (!res.ok) {
+          if (isIntakeSession) {
+            localStorage.removeItem('interviewToken');
+            token = '';
+            $('name-input-area').style.display = 'block';
+            switchScreen('setup');
+            setTimeout(() => $('name-input').focus(), 100);
+          } else {
+            switchScreen('invalid');
+          }
+          return;
+        }
+
+        const { user, session } = await res.json();
+        userName = user.name;
+        isInvitedUser = user.invited !== false;
+        $('welcome-h1').textContent = `Hey ${userName},`;
+        $('header-sub').textContent = `Interview mit ${userName}`;
+
+        if (session?.briefing) {
+          if (session.briefing.startsWith('===MOCKUP===')) {
+            renderMockup(session.briefing.replace('===MOCKUP===', '').trim());
+          } else {
+            renderBriefing(session.briefing);
+          }
+        } else if (session?.messages?.length > 1) {
+          messages = session.messages;
+          userMsgCount = session.messages.filter(m => m.role === 'user').length - 1;
+          updateProgress();
+          switchScreen('chat');
+          loadMessagesIntoUI(session.messages, user.name);
+        } else {
+          switchScreen('setup');
+        }
+      } catch {
+        switchScreen('invalid');
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

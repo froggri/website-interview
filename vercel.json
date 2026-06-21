@@ -1,7 +1,8 @@
 {
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/i/:code", "destination": "/?token=:code" },
+    { "source": "/admin",     "destination": "/admin.html" },
+    { "source": "/interview", "destination": "/interview.html" },
+    { "source": "/i/:code",   "destination": "/interview?token=:code" },
 
     { "source": "/api/session/complete", "destination": "/api/session?sub=complete" },
 
